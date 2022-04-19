@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs",
-    "watch": "tsup src/index.ts --format esm,cjs --watch",
+    "watch": "tsup src/index.ts --dts --format esm,cjs --watch",
     "test": "uvu -r tsm test",
     "prepublishOnly": "rm -rf dist && npm run build"
   },
