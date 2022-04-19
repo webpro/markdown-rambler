@@ -1,3 +1,4 @@
+import './util/at';
 import { EOL } from 'os';
 import { debuglog } from 'util';
 import { join } from 'node:path';
