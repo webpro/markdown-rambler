@@ -147,6 +147,7 @@ export class MarkdownRambler {
       const parsedVFile = await this.parseMarkdownFile(file);
       const vFile = await this.renderMarkdownFile(parsedVFile);
       dbg(vFile, `Writing ${vFile.history.at(-1)}`);
+      this.verbose(`Writing ${vFile.history.at(-1)}`);
       await mkdirp(vFile);
       await toVFile.write(vFile);
     } else {
