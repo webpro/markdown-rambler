@@ -63,6 +63,7 @@ export interface RamblerOptions extends Partial<TransferrableOptions> {
   outputDir?: string;
   watchDir?: string | string[];
   verbose?: boolean;
+  watch?: boolean;
 
   formatMarkdown?: boolean;
 

@@ -46,7 +46,7 @@ export class MarkdownRambler {
 
   setDefaultOptions(options) {
     return _.defaultsDeep(options, {
-      contentDir: !options.contentFiles ? 'content' : undefined,
+      contentDir: !options.contentFiles ? 'content' : '.',
       contentFiles: '**/*',
       outputDir: 'dist',
       host: '',
@@ -106,8 +106,11 @@ export class MarkdownRambler {
 
     if (this.options.sitemap) {
       const sitemap = await this.renderSitemap(filteredVFiles);
-
       console.log(`✔ Sitemap (at ${sitemap})`);
+    }
+
+    if (this.options.watch) {
+      this.watch(this.options.contentDir);
     }
   }
 
@@ -283,10 +286,11 @@ export class MarkdownRambler {
   }
 
   public watch(dir: string | string[]) {
+    const ignoreDir = this.options.outputDir;
     if (dir) {
       const watchDirs = [dir].flat();
       watchDirs.forEach(dir => {
-        watchDir(dir, file => this.handleFile(file));
+        watchDir({ dir, cb: file => this.handleFile(file), ignoreDir });
       });
     }
   }

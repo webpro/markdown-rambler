@@ -31,12 +31,16 @@ export const optimizeSVG = async (source, target) => {
   await writeFile(target, optimized.data, 'utf8');
 };
 
-export const watchDir = (dir, cb) => {
+export const watchDir = ({ dir, cb, ignoreDir }) => {
   const callback = (eventType: string, filename: string): void => {
-    if (filename) {
-      cb([dir, filename]);
-    } else {
-      console.warn('Filename not provided for', eventType, filename);
+    const file = join(dir, filename);
+    if (file.startsWith(ignoreDir) || file.startsWith('.') || file.startsWith('node_modules')) return;
+    if (eventType === 'change') {
+      if (filename) {
+        cb([dir, filename]);
+      } else {
+        console.warn('Filename not provided for', eventType, filename);
+      }
     }
   };
   watch(dir, { recursive: true }, callback);
