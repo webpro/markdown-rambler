@@ -95,7 +95,7 @@ export class MarkdownRambler {
     });
 
     const assetFiles = files.filter(([dir, filename]) => !filename.endsWith('.md'));
-    assetFiles.forEach(file => this.copyAsset(file));
+    await Promise.all(assetFiles.map(file => this.copyAsset(file)));
 
     console.log(`✔ ${renderedVFiles.length} HTML and ${assetFiles.length} asset files (in ${this.options.outputDir})`);
 
@@ -122,7 +122,7 @@ export class MarkdownRambler {
     return files.flat();
   }
 
-  copyAsset(file: File) {
+  async copyAsset(file: File) {
     const [dir, filename] = file;
     const source = join(dir, filename);
     const target = join(this.options.outputDir, filename);
@@ -130,11 +130,11 @@ export class MarkdownRambler {
     if (filename.endsWith('.svg')) {
       dbg(source, `Optimizing to ${target}`);
       this.verbose(`Optimizing ${target}`);
-      optimizeSVG(source, target);
+      await optimizeSVG(source, target);
     } else {
       dbg(source, `Copying to ${target}`);
-      this.verbose(`Writing ${target}`);
-      copy(source, target);
+      this.verbose(`Copying ${target}`);
+      await copy(source, target);
     }
   }
 

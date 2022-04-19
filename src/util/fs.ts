@@ -27,6 +27,7 @@ export const optimizeSVG = async (source, target) => {
     path: source,
     plugins: ['removeDimensions', { name: 'removeAttrs', params: { attrs: 'content' } }]
   });
+  await ensureDir(target);
   await writeFile(target, optimized.data, 'utf8');
 };
 
