@@ -172,10 +172,12 @@ export class MarkdownRambler {
     const tree = parser.parse(vFile);
 
     if (options.formatMarkdown) {
-      dbg(vFile, `Formatting and writing`);
-      // @ts-ignore
-      await unified().use(defaultParsers[0]).use(formatters).process(vFile);
-      toVFile.write(vFile);
+      dbg(vFile, `Formatting`);
+      const formattedVFile = await unified().use([defaultParsers[0]]).use(formatters).process(vFile);
+      if (formattedVFile.value.toString() !== vFile.value.toString()) {
+        this.verbose(`Formatting ${vFile.history.at(0)}`);
+        await write(vFile.history.at(0), formattedVFile.value);
+      }
     }
 
     // Rename to target file path
