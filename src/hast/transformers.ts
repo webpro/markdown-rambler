@@ -8,7 +8,10 @@ const defaultTransformers: Transformers = vFile => {
   const { data } = vFile;
   const { meta, structuredContent } = data;
   return [
-    [doc, { title: meta.title, meta: getMetaTags(meta), link: getLinkTags(meta), js: meta.scripts }],
+    [
+      doc,
+      { title: meta.title, meta: getMetaTags(meta), link: getLinkTags(meta), js: meta.scripts, language: meta.language }
+    ],
     [addInlineScript, { type: 'application/ld+json', content: JSON.stringify(structuredContent) }]
   ];
 };

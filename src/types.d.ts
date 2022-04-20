@@ -51,7 +51,7 @@ type Feed =
 interface TransferrableOptions {
   host: string;
   name: string;
-  lang: string;
+  language: string;
   sitemap: boolean;
   manifest: false | string;
   feed: Feed;

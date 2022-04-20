@@ -51,7 +51,7 @@ export class MarkdownRambler {
       outputDir: 'dist',
       host: '',
       name: '',
-      lang: 'en',
+      language: 'en',
       manifest: false,
       sitemap: true,
       feed: false
@@ -269,7 +269,7 @@ export class MarkdownRambler {
         author,
         tags: [],
         url: this.options.host,
-        lang: this.options.lang,
+        lang: this.options.language,
         feedUrl: join(this.options.host, this.options.feed.pathname)
       },
       items
