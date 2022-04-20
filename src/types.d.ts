@@ -39,14 +39,12 @@ export type BuildMetaData = (vFile: VFile, options: RamblerOptions) => Meta;
 export type PageType = 'page' | string;
 export type PageTypes = PageType[];
 
-type Feed =
-  | false
-  | {
-      pathname: string;
-      title: string;
-      description?: string;
-      author?: string;
-    };
+type Feed = {
+  pathname: string;
+  title: string;
+  description?: string;
+  author?: string;
+};
 
 interface TransferrableOptions {
   host: string;
@@ -54,7 +52,7 @@ interface TransferrableOptions {
   language: string;
   sitemap: boolean;
   manifest: false | string;
-  feed: Feed;
+  feed: false | Feed;
 }
 
 export interface RamblerOptions extends Partial<TransferrableOptions> {
@@ -101,6 +99,7 @@ export interface PageOptions {
 }
 
 export interface Meta extends PageOptions, TransferrableOptions {
+  type: string;
   pathname: string;
 }
 
