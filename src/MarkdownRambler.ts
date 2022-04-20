@@ -19,7 +19,7 @@ import defaultConverters from './mdast/convert';
 import { getDocumentTitle } from './mdast/helpers';
 import defaultTransformers from './hast/transformers';
 import defaultRenderers from './hast/render';
-import { buildMetaData as defaultMetaBuilder, groupByType } from './util';
+import { buildMetaData, groupByType } from './util';
 import { write, copy, optimizeSVG, watchDir } from './util/fs';
 import { getStructuredContent } from './util/structured-content';
 import { layout } from './hast/layout';
@@ -169,7 +169,6 @@ export class MarkdownRambler {
     const parser = this.parser;
     const outputDir = this.options.outputDir;
     const type = options.type;
-    const buildMetaData = this.options.buildMetaData ?? defaultMetaBuilder;
     const tree = parser.parse(vFile);
 
     if (options.formatMarkdown) {

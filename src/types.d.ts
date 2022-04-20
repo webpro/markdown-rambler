@@ -71,8 +71,6 @@ export interface RamblerOptions extends Partial<TransferrableOptions> {
 
   type?: (filename: string) => PageType;
 
-  buildMetaData?: BuildMetaData;
-
   parsers?: PluggableList;
   additionalParsers?: PluggableList;
   converters?: PluggableList;
