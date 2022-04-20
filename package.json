@@ -1,7 +1,7 @@
 {
   "name": "markdown-rambler",
   "version": "0.0.2",
-  "description": "Markdown Rambler",
+  "description": "Yet another opinionated & powerful static site generator.",
   "main": "dist/index.js",
   "type": "module",
   "files": [
@@ -13,6 +13,8 @@
       "require": "./dist/index.cjs"
     }
   },
+  "repository": "github:webpro/markdown-rambler",
+  "homepage": "https://github.com/webpro/markdown-rambler",
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs",
     "watch": "tsup src/index.ts --dts --format esm,cjs --watch",
@@ -27,7 +29,11 @@
     "remark",
     "rehype"
   ],
-  "author": "",
+  "author": {
+    "name": "Lars Kappert",
+    "email": "lars@webpro.nl",
+    "url": "https://www.webpro.nl"
+  },
   "license": "ISC",
   "dependencies": {
     "globby": "^13.1.1",
@@ -66,5 +72,8 @@
     "tsup": "^5.12.2",
     "typescript": "^4.6.3",
     "uvu": "^0.5.3"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }
