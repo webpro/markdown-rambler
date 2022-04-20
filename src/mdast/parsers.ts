@@ -1,23 +1,11 @@
 import parse from 'remark-parse';
 import front from 'remark-frontmatter';
 import directives from 'remark-directive';
-import { gfmTable } from 'micromark-extension-gfm-table';
-import { gfmTableFromMarkdown, gfmTableToMarkdown } from 'mdast-util-gfm-table';
 import { h } from 'hastscript';
 import { visit } from 'unist-util-visit';
 import type { Plugin } from 'unified';
+import { table } from './table';
 import type { Directives, Tree } from '../types';
-
-function table() {
-  const data = this.data();
-  add('micromarkExtensions', gfmTable);
-  add('fromMarkdownExtensions', gfmTableFromMarkdown);
-  add('toMarkdownExtensions', gfmTableToMarkdown);
-  function add(field, value) {
-    data[field] = data[field] || [];
-    data[field].push(value);
-  }
-}
 
 export default [parse, front, table, directives];
 
