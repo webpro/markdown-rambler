@@ -22,7 +22,6 @@ test('should parse basic Markdown and render minimal HTML document from vFile', 
     <meta property="og:type" content="website">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/manifest.json">
   </head>
   <body>
     <h1>Hello, world!</h1>
@@ -48,13 +47,15 @@ test('should parse Markdown and renderHTML document from vFile', async () => {
         return h('footer', h('p', [`© ${year}, `, h('a', { href: publisher.href }, publisher.name)]));
       }
     },
+    host: 'https://example.org',
+    name: 'Just Doe It',
+    feed: { pathname: '/rss.xml', title: 'Latest Does' },
+    manifest: '/manifest.json',
     defaults: {
       page: {
         layout: (node, meta) =>
           html`<header><img src="${meta.logo.src}" alt="${meta.logo.alt}" /></header>
             <main>${node}</main>`,
-        host: 'https://example.org',
-        name: 'Just Doe It',
         author: { name: 'John Doe', href: 'https://john.doe.com' },
         publisher: { name: 'PBLSHR', href: 'https://publisher.co', logo: { src: 'https://cdn.publisher.co/logo.bmp' } },
         title: 'Title',
@@ -67,8 +68,7 @@ test('should parse Markdown and renderHTML document from vFile', async () => {
         draft: false,
         image: { src: 'https://cdn.doe.org/banner.tiff', alt: 'logo' },
         logo: { href: '/', src: 'https://cdn.doe.org/logo.png', alt: 'logo' },
-        icon: { src: '/icon.png' },
-        feed: { pathname: '/rss.xml', title: 'Latest Does' }
+        icon: { src: '/icon.png' }
       }
     }
   });
