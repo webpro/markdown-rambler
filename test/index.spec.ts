@@ -24,7 +24,7 @@ test('should parse basic Markdown and render minimal HTML document from vFile', 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <h1 id="hello-world">Hello, world!</h1>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"}}</script>
   </body>
 </html>
@@ -127,7 +127,7 @@ Table:
       <img src="https://cdn.doe.org/logo.png" alt="logo">
     </header>
     <main>
-      <h1>Title</h1>
+      <h1 id="title">Title</h1>
       <p>Introduction</p>
       <figure>
         <blockquote class="quote" cite="https://my.quotes.book">
@@ -191,7 +191,7 @@ test('should parse Front Matter and merge with meta data', async () => {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   </head>
   <body>
-    <h1>Essential Matters</h1>
+    <h1 id="essential-matters">Essential Matters</h1>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"datePublished":"2022-03-05T00:00:00.000Z"}</script>
   </body>
 </html>
