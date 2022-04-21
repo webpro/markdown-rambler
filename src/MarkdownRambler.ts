@@ -168,7 +168,6 @@ export class MarkdownRambler {
     const options = this.options;
     const parser = this.parser;
     const outputDir = this.options.outputDir;
-    const type = options.type;
     const tree = parser.parse(vFile);
 
     if (options.formatMarkdown) {
@@ -186,15 +185,17 @@ export class MarkdownRambler {
     rename(vFile, { dirname: join(outputDir, pathname), stem: 'index', extname: '.html' });
     dbg(vFile, `Rendered file will be written to ${vFile.history.at(-1)}`);
 
+    const type = typeof options.type === 'function' ? options.type(filename, vFile.data.matter) || 'page' : 'page';
+
     // Populate vFile.data
     matter(vFile);
+    const meta = buildMetaData(vFile, type, options);
     vFile.data.tree = tree;
-    vFile.data.type = typeof options.type === 'function' ? type(filename) || 'page' : 'page';
-    vFile.data.meta = buildMetaData(vFile, options);
+    vFile.data.meta = meta;
     vFile.data.meta.pathname = pathname;
-    vFile.data.meta.title = vFile.data.meta.title ?? getDocumentTitle(tree);
-    vFile.data.structuredContent = getStructuredContent(vFile.data.meta);
-    dbg(vFile, `The ${vFile.data.type} "${vFile.data.meta.title}" will be served from ${pathname}`);
+    vFile.data.meta.title = meta.title ?? getDocumentTitle(tree);
+    vFile.data.structuredContent = getStructuredContent(meta);
+    dbg(vFile, `The ${type} "${meta.title}" will be served from ${pathname}`);
     return vFile;
   }
 

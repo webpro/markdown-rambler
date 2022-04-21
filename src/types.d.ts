@@ -34,7 +34,7 @@ declare module 'VFile' {
   }
 }
 
-export type BuildMetaData = (vFile: VFile, options: RamblerOptions) => Meta;
+export type BuildMetaData = (vFile: VFile, type: PageType, options: RamblerOptions) => Meta;
 
 export type PageType = 'page' | string;
 export type PageTypes = PageType[];
@@ -67,7 +67,7 @@ export interface RamblerOptions extends Partial<TransferrableOptions> {
 
   linkFiles?: boolean;
 
-  type?: (filename: string) => PageType;
+  type?: (filename: string, matter: FrontMatter) => PageType;
 
   parsers?: PluggableList;
   additionalParsers?: PluggableList;

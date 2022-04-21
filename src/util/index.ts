@@ -35,8 +35,7 @@ const resolveFrontMatter = (matter): FrontMatter => {
   return obj;
 };
 
-export const buildMetaData: BuildMetaData = (vFile, options) => {
-  const { type } = vFile.data;
+export const buildMetaData: BuildMetaData = (vFile, type, options) => {
   const defaults = getDefaults(type, options.defaults);
   const matter = resolveFrontMatter(vFile.data.matter);
   const base = {
