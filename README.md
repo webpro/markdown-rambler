@@ -70,28 +70,30 @@ And all pathnames in `/sitemap.txt`:
 
 ## Options
 
-| Option              | Type                            | Default value                       | Description                                                                         |
-| ------------------- | ------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
-| `contentDir`        | `string \| string[]`            | `['public', 'content']`             | `'content'` is only added when `contentFiles` is not provided.                      |
-| `contentFiles`      | `string \| string[]`            | `'**/*'`                            | Should include assets (non-Markdown files) as well.                                 |
-| `outputDir`         | `string`                        | `'dist'`                            | All HTML and assets are written into this directory                                 |
-| `verbose`           | `boolean`                       | `false`                             | Logs more output about the process                                                  |
-| `watch`             | `boolean`                       | `false`                             | Adds a watch to re-processes modified files again                                   |
-| `host`              | `string`                        | `''`                                | Provide this for canonical url's and in meta data, etc.                             |
-| `name`              | `string`                        | `''`                                | Website name (e.g. `<meta property="og:site_name" content="{name}">`)               |
-| `language`          | `string`                        | `'en'`                              | Website language (e.g. `'fr-BE'`)                                                   |
-| `manifest`          | `false \| string`               | `false`                             | Adds `<link rel="manifest" href="{manifest}">`                                      |
-| `sitemap`           | `boolean`                       | `true`                              | Adds `sitemap.txt`                                                                  |
-| `feed`              | `false \| Feed`                 | `false`                             | Generates RSS XML file and `<link rel="alternate" type="application/rss+xml" ...>`  |
-| `formatMarkdown`    | `boolean`                       | `false`                             | Formats source Markdown files (using Prettier)                                      |
-| `type`              | `(filename: string) => string`  | `page`                              | Adds `type` property to meta data for use in layouts and plugins (e.g. `'article'`) |
-| `parsers`           | `Pluggable[]`                   | `[parse, matter, table, directive]` | Remark parsers                                                                      |
-| `additionalParsers` | `Pluggable[]`                   | `[]`                                | Additional remark parsers (on top of `parsers`)                                     |
-| `converters`        | `Pluggable[]`                   | `[remark-rehype]`                   | Plugin to convert mdast (1) to hast (2)                                             |
-| `transformers`      | `Pluggable[]`                   | `[rehype-document, ld+json]`        | Transformers applied to the hast                                                    |
-| `renderers`         | `Pluggable[]`                   | `[rehype-format, rehype-stringify]` | Plugins to render (stringify) the hast                                              |
-| `directives`        | `Record<string, any>`           | `undefined`                         | Directives to extend Markdown syntax (e.g. `::TOC` or `:::div.wrapper`)             |
-| `defaults`          | `Record<PageType, PageOptions>` | `undefined`                         | Default meta data for each document of any page type                                |
+### Overview
+
+| Option                               | Type                            | Default value                       | Description                                                                         |
+| ------------------------------------ | ------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
+| `contentDir`                         | `string \| string[]`            | `['public', 'content']`             | `'content'` is only added when `contentFiles` is not provided.                      |
+| `contentFiles`                       | `string \| string[]`            | `'**/*'`                            | Should include assets (non-Markdown files) as well.                                 |
+| `outputDir`                          | `string`                        | `'dist'`                            | All HTML and assets are written into this directory                                 |
+| `verbose`                            | `boolean`                       | `false`                             | Logs more output about the process                                                  |
+| `watch`                              | `boolean`                       | `false`                             | Adds a watch to re-processes modified files again                                   |
+| `host`                               | `string`                        | `''`                                | Provide this for canonical url's and in meta data, etc.                             |
+| `name`                               | `string`                        | `''`                                | Website name (e.g. `<meta property="og:site_name" content="{name}">`)               |
+| `language`                           | `string`                        | `'en'`                              | Website language (e.g. `'fr-BE'`)                                                   |
+| `manifest`                           | `false \| string`               | `false`                             | Adds `<link rel="manifest" href="{manifest}">`                                      |
+| `sitemap`                            | `boolean`                       | `true`                              | Adds `sitemap.txt`                                                                  |
+| `feed`                               | [`Feed`](#feed)                 | `false`                             | Generates RSS XML file and `<link rel="alternate" type="application/rss+xml" ...>`  |
+| [`formatMarkdown`](#format-markdown) | `boolean`                       | `false`                             | Formats source Markdown files (using Prettier)                                      |
+| `type`                               | [`TypeFn`](#type)               | `page`                              | Adds `type` property to meta data for use in layouts and plugins (e.g. `'article'`) |
+| [`parsers`](#parsers)                | `Pluggable[]`                   | `[parse, matter, table, directive]` | Remark parsers                                                                      |
+| [`additionalParsers`](#parsers)      | `Pluggable[]`                   | `[]`                                | Additional remark parsers (on top of `parsers`)                                     |
+| [`converters`](#converters)          | `Pluggable[]`                   | `[remark-rehype]`                   | Plugin to convert mdast (1) to hast (2)                                             |
+| [`transformers`](#transformers)      | `Pluggable[]`                   | `[rehype-document, ld+json]`        | Transformers applied to the hast                                                    |
+| [`renderers`](#renderers)            | `Pluggable[]`                   | `[rehype-format, rehype-stringify]` | Plugins to render (stringify) the hast                                              |
+| [`directives`](#directives)          | `Record<string, any>`           | `undefined`                         | Directives to extend Markdown syntax (e.g. `::TOC` or `:::div.wrapper`)             |
+| [`defaults`](#defaults)              | `Record<PageType, PageOptions>` | `undefined`                         | Default meta data for each document of any page type                                |
 
 1. mdast: Markdown Abstract Syntax Tree
 2. hast: HyperText (HTML) AST
@@ -104,7 +106,22 @@ type Feed = {
   title: string;
   description?: string;
   author?: string;
+  filter?: (type: string, vFile: VFile) => boolean;
 };
+```
+
+### Type
+
+```typescript
+type TypeFn = (filename: string, matter: FrontMatter) => PageType;
+```
+
+Example:
+
+```typescript
+{
+  type: filename => (filename.match(/^blog\//) ? 'article' : 'page');
+}
 ```
 
 ### Unified Plugins

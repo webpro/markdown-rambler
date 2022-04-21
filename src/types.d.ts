@@ -44,7 +44,7 @@ type Feed = {
   title: string;
   description?: string;
   author?: string;
-  filter?: (type, vFile: VFile) => boolean;
+  filter?: (type: PageType, vFile: VFile) => boolean;
 };
 
 interface TransferrableOptions {
