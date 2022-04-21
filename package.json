@@ -19,7 +19,8 @@
     "build": "tsup src/index.ts --dts --format esm,cjs",
     "watch": "tsup src/index.ts --dts --format esm,cjs --watch",
     "test": "uvu -r tsm test",
-    "prepublishOnly": "npm test && rm -rf dist && npm run build"
+    "prepublishOnly": "npm test && rm -rf dist && npm run build",
+    "release": "release-it"
   },
   "keywords": [
     "static",
@@ -68,6 +69,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.23",
+    "release-it": "^14.14.2",
     "tsm": "^2.2.1",
     "tsup": "^5.12.2",
     "typescript": "^4.6.3",
