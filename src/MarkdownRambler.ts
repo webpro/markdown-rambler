@@ -173,7 +173,7 @@ export class MarkdownRambler {
 
     if (options.formatMarkdown) {
       dbg(vFile, `Formatting`);
-      const formattedVFile = await unified().use([defaultParsers[0]]).use(formatters).process(vFile);
+      const formattedVFile = await unified().use([defaultParsers[0]]).use(formatters).process(String(vFile));
       if (formattedVFile.value.toString() !== vFile.value.toString()) {
         this.verbose(`Formatting ${vFile.history.at(0)}`);
         await write(vFile.history.at(0), formattedVFile.value);
