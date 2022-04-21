@@ -16,7 +16,7 @@ import defaultParsers from './mdast/parsers';
 import { transformDirectives } from './mdast/parsers';
 import formatters from './mdast/formatters';
 import defaultConverters from './mdast/convert';
-import { getDocumentTitle } from './mdast/helpers';
+import { getDocumentTitle, removeDocumentTitle } from './mdast/helpers';
 import defaultTransformers from './hast/transformers';
 import defaultRenderers from './hast/render';
 import { buildMetaData, groupByType } from './util';
@@ -246,8 +246,8 @@ export class MarkdownRambler {
         .sort((a, b) => +new Date(b.data.meta.published) - +new Date(a.data.meta.published))
         .slice(0, 10)
         .map(async vFile => {
-          const compiler = [defaultRenderers[1]];
-          const processor = unified().use(defaultConverters).use(compiler);
+          const plugins = [removeDocumentTitle, ...defaultConverters, defaultRenderers[1]];
+          const processor = unified().use(plugins);
           const tree = await processor.run(vFile.data.tree);
           const html = processor.stringify(tree) as string;
           const { meta } = vFile.data;

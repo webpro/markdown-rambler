@@ -11,7 +11,7 @@ export const getDocumentTitle = (tree): string => {
   return title;
 };
 
-export const removeDocumentTitle = (tree): void => {
+export const removeDocumentTitle = () => tree => {
   visit(tree, 'heading', (node, index, parent) => {
     if (node.depth === 1) {
       parent?.children.splice(index, 1);
