@@ -236,25 +236,31 @@ export class MarkdownRambler {
   async renderFeed(vFiles: VFile[]) {
     if (!this.options.feed) return;
 
-    const sorted = [...vFiles].sort((a, b) => +new Date(b.data.meta.published) - +new Date(a.data.meta.published));
+    const { filter } = this.options.feed;
+
+    const filtered =
+      typeof filter === 'function' ? vFiles.filter(vFile => filter(vFile.data.meta.type, vFile)) : [...vFiles];
 
     const items = await Promise.all(
-      sorted.slice(0, 10).map(async vFile => {
-        const compiler = [defaultRenderers[1]];
-        const processor = unified().use(defaultConverters).use(compiler);
-        const tree = await processor.run(vFile.data.tree);
-        const html = processor.stringify(tree) as string;
-        const { meta } = vFile.data;
-        return {
-          title: meta.title,
-          description: meta.description,
-          descriptionHtml: html,
-          author: meta.author,
-          url: join(this.options.host, meta.pathname),
-          modified: meta.modified,
-          published: meta.published
-        };
-      })
+      filtered
+        .sort((a, b) => +new Date(b.data.meta.published) - +new Date(a.data.meta.published))
+        .slice(0, 10)
+        .map(async vFile => {
+          const compiler = [defaultRenderers[1]];
+          const processor = unified().use(defaultConverters).use(compiler);
+          const tree = await processor.run(vFile.data.tree);
+          const html = processor.stringify(tree) as string;
+          const { meta } = vFile.data;
+          return {
+            title: meta.title,
+            description: meta.description,
+            descriptionHtml: html,
+            author: meta.author,
+            url: join(this.options.host, meta.pathname),
+            modified: meta.modified,
+            published: meta.published
+          };
+        })
     );
 
     const filename = join(this.options.outputDir, this.options.feed.pathname);
