@@ -182,7 +182,7 @@ export class MarkdownRambler {
     // Rename to target file path
     const filename = vFile.history.at(0);
     const pathname = '/' + filename.replace(/(README|index)?\.md$/, '').replace(/(.+)\/$/, '$1');
-    rename(vFile, { dirname: join(outputDir, pathname), stem: 'index', extname: '.html' });
+    vFile = rename(vFile, { dirname: join(outputDir, pathname), stem: 'index', extname: '.html' });
     dbg(vFile, `Rendered file will be written to ${vFile.history.at(-1)}`);
 
     const type = typeof options.type === 'function' ? options.type(filename, vFile.data.matter) || 'page' : 'page';
