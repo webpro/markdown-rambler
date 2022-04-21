@@ -2,7 +2,7 @@ import type { VFile, BuildMetaData, FrontMatter } from '../types';
 
 export const groupByType = (vFiles: VFile[]) =>
   vFiles.reduce((group, vFile) => {
-    const { type } = vFile.data;
+    const { type } = vFile.data.meta;
     group[type] = group[type] ?? [];
     group[type].push(vFile);
     return group;

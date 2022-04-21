@@ -11,16 +11,22 @@ const getPage = (meta: Meta, base) =>
     mainEntityOfPage: { '@id': meta.host + meta.pathname }
   });
 
-const getArticle = (meta: Meta, base) =>
-  _.merge({}, base, {
-    '@type': 'Article',
-    headline: meta.title,
-    description: meta.description,
-    datePublished: iso(meta.published),
-    dateModified: iso(meta.modified),
-    mainEntityOfPage: { '@id': meta.host + meta.pathname },
-    image: [meta.image.src || meta.publisher.logo.src]
-  });
+const getArticle = (meta: Meta, base) => {
+  const image = meta.image?.src || meta.publisher?.logo?.src;
+  return _.merge(
+    {},
+    base,
+    {
+      '@type': 'Article',
+      headline: meta.title,
+      description: meta.description,
+      datePublished: iso(meta.published),
+      dateModified: iso(meta.modified),
+      mainEntityOfPage: { '@id': meta.host + meta.pathname }
+    },
+    image ? { image } : {}
+  );
+};
 
 export const getStructuredContent = (meta: Meta): Schema => {
   const base: Schema = {
