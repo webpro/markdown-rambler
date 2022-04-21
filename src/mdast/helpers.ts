@@ -1,7 +1,4 @@
-import { readSync } from 'to-vfile';
-import { FrozenProcessor } from 'unified';
 import { visit } from 'unist-util-visit';
-import { matter } from 'vfile-matter';
 
 export const getDocumentTitle = (tree): string => {
   let title = '';
@@ -21,12 +18,4 @@ export const removeDocumentTitle = (tree): void => {
       return false;
     }
   });
-};
-
-export const getMarkdownParser = (processor: FrozenProcessor) => (filePath: string) => {
-  const vFile = readSync(filePath);
-  const tree = processor.parse(vFile);
-  vFile.data.tree = tree;
-  vFile.data.title = getDocumentTitle(tree);
-  return matter(vFile);
 };
