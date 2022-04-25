@@ -16,6 +16,7 @@ Turns directories with Markdown files into static websites.
 - Includes **SVGO** to optimize SVGs assets.
 - Writes **sitemap.txt**.
 - Writes **RSS feed**.
+- Writes **search index** (using MiniMatch).
 
 ## Input
 
@@ -72,35 +73,53 @@ And all pathnames in `/sitemap.txt`:
 
 ### Overview
 
-| Option                               | Type                            | Default value                   | Description                                                                         |
-| ------------------------------------ | ------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------- |
-| `contentDir`                         | `string \| string[]`            | `['public', 'content']`         | `'content'` is only added when `contentFiles` is not provided.                      |
-| `contentFiles`                       | `string \| string[]`            | `'**/*'`                        | Should include assets (non-Markdown files) as well.                                 |
-| `outputDir`                          | `string`                        | `'dist'`                        | All HTML and assets are written into this directory                                 |
-| `verbose`                            | `boolean`                       | `false`                         | Logs more output about the process                                                  |
-| `watch`                              | `boolean`                       | `false`                         | Adds a watch to re-processes modified files again                                   |
-| `host`                               | `string`                        | `''`                            | Provide this for canonical url's and in meta data, etc.                             |
-| `name`                               | `string`                        | `''`                            | Website name (e.g. `<meta property="og:site_name" content="{name}">`)               |
-| `language`                           | `string`                        | `'en'`                          | Website language (e.g. `'fr-BE'`)                                                   |
-| `manifest`                           | `false \| string`               | `false`                         | Adds `<link rel="manifest" href="{manifest}">`                                      |
-| `sitemap`                            | `boolean`                       | `true`                          | Adds `sitemap.txt`                                                                  |
-| `feed`                               | [`Feed`](#feed)                 | `false`                         | Generates RSS XML file and `<link rel="alternate" type="application/rss+xml" ...>`  |
-| [`formatMarkdown`](#format-markdown) | `boolean`                       | `false`                         | Formats source Markdown files (using Prettier)                                      |
-| `type`                               | [`TypeFn`](#type)               | `page`                          | Adds `type` property to meta data for use in layouts and plugins (e.g. `'article'`) |
-| [`parsers`](#parsers)                | `Pluggable[]`                   | [`parsers`](#parsers)           | Remark parsers                                                                      |
-| [`additionalParsers`](#parsers)      | `Pluggable[]`                   | [`additionalParsers`](#parsers) | Additional remark parsers (on top of `parsers`)                                     |
-| [`converters`](#converters)          | `Pluggable[]`                   | [`converters`](#converters)     | Plugin to convert mdast (1) to hast (2)                                             |
-| [`transformers`](#transformers)      | `Pluggable[]`                   | [`transformers`](#transformers) | Transformers applied to the hast                                                    |
-| [`renderers`](#renderers)            | `Pluggable[]`                   | [`renderers`](#renderers)       | Plugins to render (stringify) the hast                                              |
-| [`directives`](#directives)          | `Record<string, any>`           | `undefined`                     | Directives to extend Markdown syntax (e.g. `::TOC` or `:::div.wrapper`)             |
-| [`defaults`](#defaults)              | `Record<PageType, PageOptions>` | `undefined`                     | Default meta data for each document of any page type                                |
+#### File Structure & Output
+
+| Option         | Type                 | Default value           | Description                                                                        |
+| -------------- | -------------------- | ----------------------- | ---------------------------------------------------------------------------------- |
+| `contentFiles` | `string \| string[]` | `'**/*'`                | Should include assets (non-Markdown files) as well.                                |
+| `contentDir`   | `string \| string[]` | `['public', 'content']` | `'content'` is only added when `contentFiles` is not provided.                     |
+| `outputDir`    | `string`             | `'dist'`                | All pages and assets are written into this directory                               |
+| `sitemap`      | `boolean`            | `true`                  | Adds `sitemap.txt`                                                                 |
+| `feed`         | [`Feed`](#feed)      | `false`                 | Generates RSS XML file and `<link rel="alternate" type="application/rss+xml" ...>` |
+| `search`       | [`Search`](#search)  | `false`                 | Generates MiniSearch index                                                         |
+
+#### Flags
+
+| Option                               | Type      | Default value | Description                                    |
+| ------------------------------------ | --------- | ------------- | ---------------------------------------------- |
+| `verbose`                            | `boolean` | `false`       | Logs more output about the process             |
+| `watch`                              | `boolean` | `false`       | Add watcher to re-process modified files       |
+| [`formatMarkdown`](#format-markdown) | `boolean` | `false`       | Formats source Markdown files (using Prettier) |
+
+#### Content
+
+| Option                  | Type                            | Default value | Description                                                                         |
+| ----------------------- | ------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| `host`                  | `string`                        | `''`          | Provide this for canonical url's and in meta data, etc.                             |
+| `name`                  | `string`                        | `''`          | Website name (e.g. `<meta property="og:site_name" content="{name}">`)               |
+| `language`              | `string`                        | `'en'`        | Website language (e.g. `'fr-BE'`)                                                   |
+| `manifest`              | `false \| string`               | `false`       | Adds `<link rel="manifest" href="{manifest}">`                                      |
+| `type`                  | [`TypeFn`](#type)               | `page`        | Adds `type` property to meta data for use in layouts and plugins (e.g. `'article'`) |
+| [`defaults`](#defaults) | `Record<PageType, PageOptions>` | `undefined`   | Default meta data for each document of any page type                                |
+
+#### Plugins
+
+| Option                          | Type                  | Default value                   | Description                                                             |
+| ------------------------------- | --------------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| [`parsers`](#parsers)           | `Pluggable[]`         | [`parsers`](#parsers)           | Remark parsers                                                          |
+| [`additionalParsers`](#parsers) | `Pluggable[]`         | [`additionalParsers`](#parsers) | Additional remark parsers (on top of `parsers`)                         |
+| [`converters`](#converters)     | `Pluggable[]`         | [`converters`](#converters)     | Plugin to convert mdast (1) to hast (2)                                 |
+| [`transformers`](#transformers) | `Pluggable[]`         | [`transformers`](#transformers) | Transformers applied to the hast                                        |
+| [`renderers`](#renderers)       | `Pluggable[]`         | [`renderers`](#renderers)       | Plugins to render (stringify) the hast                                  |
+| [`directives`](#directives)     | `Record<string, any>` | `undefined`                     | Directives to extend Markdown syntax (e.g. `::TOC` or `:::div.wrapper`) |
 
 1. mdast: Markdown Abstract Syntax Tree
 2. hast: HyperText (HTML) AST
 
 ### Feed
 
-```typescript
+```ts
 type Feed = {
   pathname: string;
   title: string;
@@ -110,15 +129,45 @@ type Feed = {
 };
 ```
 
+### Search
+
+```ts
+type Search = {
+  outputDir: string;
+  filter?: (type: string, vFile: VFile) => boolean;
+};
+```
+
+Generates a [MiniSearch](https://lucaong.github.io/minisearch/) index file to be used in your client. Here's a minimal
+example of a client script to use the search index:
+
+```js
+(async () => {
+  await import('https://cdn.jsdelivr.net/npm/minisearch@4.0.3/dist/umd/index.min.js');
+  const searchIndex = await fetch('/_search/index.json').then(response => response.text());
+  const index = MiniSearch.loadJSON(searchIndex, { fields: ['title', 'content'] });
+  const searchBox = document.querySelector('input[type=search]');
+  const search = query => {
+    const results = index.search(query, { prefix: true, fuzzy: 0.3 });
+    console.log(results);
+  };
+  searchBox.addEventListener('input', event => {
+    search(event.target.value);
+  });
+})();
+```
+
+The script(s) can be added to e.g. the `public` folder and added to the `defaults.page.scripts` array.
+
 ### Type
 
-```typescript
+```ts
 type TypeFn = (filename: string, matter: FrontMatter) => PageType;
 ```
 
 Example:
 
-```typescript
+```ts
 {
   type: filename => (filename.match(/^blog\//) ? 'article' : 'page');
 }
@@ -264,7 +313,7 @@ The merged meta data will be used in the meta tags and structured content, and i
 Each page type can have its own layout to wrap the content. Render `${node}` somewhere, and use all of the page's meta
 data that was provided by Markdown Rambler and yourself:
 
-```typescript
+```ts
 import { html } from 'markdown-rambler';
 
 export default (node, meta) => {
