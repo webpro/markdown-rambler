@@ -39,14 +39,6 @@ export type BuildMetaData = (vFile: VFile, type: PageType, options: RamblerOptio
 export type PageType = 'page' | string;
 export type PageTypes = PageType[];
 
-type Feed = {
-  pathname: string;
-  title: string;
-  description?: string;
-  author?: string;
-  filter?: (type: PageType, vFile: VFile) => boolean;
-};
-
 interface TransferrableOptions {
   host: string;
   name: string;
@@ -104,6 +96,14 @@ export interface Meta extends PageOptions, TransferrableOptions {
   type: string;
   pathname: string;
 }
+
+type Feed = {
+  pathname: string;
+  title: string;
+  description?: string;
+  author?: string;
+  filter?: (type: PageType, vFile: VFile) => boolean;
+};
 
 type Search = {
   outputDir: string;

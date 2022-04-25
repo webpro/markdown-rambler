@@ -80,6 +80,7 @@ export class MarkdownRambler {
     const markdownFiles = files.filter(([dir, filename]) => filename.endsWith('.md'));
     const parsedVFiles = await this.parseMarkdownFiles(markdownFiles);
     const filteredVFiles = parsedVFiles.filter(vFile => !this.isDraft(vFile));
+
     if (this.options.linkFiles) {
       const files = groupByType(filteredVFiles);
       filteredVFiles.forEach(vFile => {
@@ -87,9 +88,9 @@ export class MarkdownRambler {
       });
     }
 
-    const renderedVFiles = await this.renderMarkdownFiles(filteredVFiles);
+    const vFiles = await this.renderMarkdownFiles(filteredVFiles);
 
-    renderedVFiles.map(async vFile => {
+    vFiles.map(async vFile => {
       dbg(vFile, `Writing ${vFile.history.at(-1)}`);
       this.verbose(`Writing ${vFile.history.at(-1)}`);
       await mkdirp(vFile);
@@ -99,15 +100,15 @@ export class MarkdownRambler {
     const assetFiles = files.filter(([dir, filename]) => !filename.endsWith('.md'));
     await Promise.all(assetFiles.map(file => this.copyAsset(file)));
 
-    console.log(`✔ ${renderedVFiles.length} HTML and ${assetFiles.length} asset files (in ${this.options.outputDir})`);
+    console.log(`✔ ${vFiles.length} pages and ${assetFiles.length} asset files (in ${this.options.outputDir})`);
 
     if (this.options.feed) {
-      const feed = await this.renderFeed(filteredVFiles);
+      const feed = await this.renderFeed(vFiles);
       console.log(`✔ Feed (at ${feed})`);
     }
 
     if (this.options.sitemap) {
-      const sitemap = await this.renderSitemap(filteredVFiles);
+      const sitemap = await this.renderSitemap(vFiles);
       console.log(`✔ Sitemap (at ${sitemap})`);
     }
 
@@ -117,7 +118,8 @@ export class MarkdownRambler {
     }
 
     if (this.options.watch) {
-      this.watch(this.options.contentDir);
+      const watchDirs = await this.watch(this.options.contentDir);
+      watchDirs.forEach(dir => console.log(`▶︎ Watching for changes in ./${dir}`));
     }
   }
 
@@ -179,10 +181,11 @@ export class MarkdownRambler {
 
     if (options.formatMarkdown) {
       dbg(vFile, `Formatting`);
-      const formattedVFile = await unified().use([defaultParsers[0]]).use(formatters).process(String(vFile));
+      const plugins = [defaultParsers[0], defaultParsers[1], ...formatters];
+      const formattedVFile = await unified().use(plugins).process(String(vFile));
       if (formattedVFile.value.toString() !== vFile.value.toString()) {
-        this.verbose(`Formatting ${vFile.history.at(0)}`);
-        await write(vFile.history.at(0), formattedVFile.value);
+        this.verbose(`Formatting ${vFile.history.at(-1)}`);
+        await write(vFile.history.at(-1), formattedVFile.value);
       }
     }
 
@@ -327,14 +330,16 @@ export class MarkdownRambler {
     return filename;
   }
 
-  public watch(dir: string | string[]) {
+  public async watch(dir: string | string[]) {
     const ignoreDir = this.options.outputDir;
     if (dir) {
-      const watchDirs = [dir].flat();
-      watchDirs.forEach(dir => {
-        watchDir({ dir, cb: file => this.handleFile(file), ignoreDir });
-      });
+      const watchDirs = [dir, 'public'].flat();
+      const dirs = await Promise.all(
+        watchDirs.map(dir => watchDir({ dir, cb: file => this.handleFile(file), ignoreDir }))
+      );
+      return dirs.filter(Boolean);
     }
+    return [];
   }
 
   verbose(text: string) {

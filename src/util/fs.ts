@@ -31,7 +31,7 @@ export const optimizeSVG = async (source, target) => {
   await writeFile(target, optimized.data, 'utf8');
 };
 
-export const watchDir = ({ dir, cb, ignoreDir }) => {
+export const watchDir = async ({ dir, cb, ignoreDir }) => {
   const callback = (eventType: string, filename: string): void => {
     const file = join(dir, filename);
     if (file.startsWith(ignoreDir) || file.startsWith('.') || file.startsWith('node_modules')) return;
@@ -43,6 +43,9 @@ export const watchDir = ({ dir, cb, ignoreDir }) => {
       }
     }
   };
-  watch(dir, { recursive: true }, callback);
-  console.log('Watching', dir, 'for changes...');
+  try {
+    await access(dir, constants.W_OK);
+    watch(dir, { recursive: true }, callback);
+    return dir;
+  } catch (error) {}
 };
