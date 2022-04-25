@@ -43,6 +43,7 @@
     "lodash": "^4.17.21",
     "mdast-util-gfm-table": "^1.0.4",
     "micromark-extension-gfm-table": "^1.0.5",
+    "minisearch": "^4.0.3",
     "prettier": "^2.6.2",
     "rehype-autolink-headings": "^6.1.1",
     "rehype-document": "^6.0.1",

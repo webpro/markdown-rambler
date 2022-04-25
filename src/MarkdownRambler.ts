@@ -12,6 +12,7 @@ import { rename } from 'vfile-rename';
 import { mkdirp } from 'vfile-mkdirp';
 import { rss } from 'xast-util-feed';
 import { toXml } from 'xast-util-to-xml';
+import MiniSearch from 'minisearch';
 import defaultParsers from './mdast/parsers';
 import { transformDirectives } from './mdast/parsers';
 import formatters from './mdast/formatters';
@@ -54,7 +55,8 @@ export class MarkdownRambler {
       language: 'en',
       manifest: false,
       sitemap: true,
-      feed: false
+      feed: false,
+      search: false
     });
   }
 
@@ -107,6 +109,11 @@ export class MarkdownRambler {
     if (this.options.sitemap) {
       const sitemap = await this.renderSitemap(filteredVFiles);
       console.log(`✔ Sitemap (at ${sitemap})`);
+    }
+
+    if (this.options.search) {
+      const search = await this.renderSearchIndex(vFiles);
+      console.log(`✔ Search index (at ${search})`);
     }
 
     if (this.options.watch) {
@@ -190,6 +197,7 @@ export class MarkdownRambler {
     // Populate vFile.data
     matter(vFile);
     const meta = buildMetaData(vFile, type, options);
+    vFile.data.markdown = String(vFile.value);
     vFile.data.tree = tree;
     vFile.data.meta = meta;
     vFile.data.meta.pathname = pathname;
@@ -291,6 +299,31 @@ export class MarkdownRambler {
     const filename = join(this.options.outputDir, 'sitemap.txt');
     const items = vFiles.map(vFile => vFile.data.meta.pathname);
     await write(filename, items.sort().join(EOL) + EOL);
+    return filename;
+  }
+
+  async renderSearchIndex(vFiles: VFile[]) {
+    const defaults = { outputDir: '_search', filter: () => true };
+    const options = this.options.search === true ? defaults : _.defaults(this.options.search, defaults);
+    const documents = vFiles
+      .filter(vFile => options.filter(vFile.data.meta.type, vFile))
+      .map((vFile, index) => ({
+        id: index,
+        title: vFile.data.meta.title,
+        description: vFile.data.meta.description,
+        pathname: vFile.data.meta.pathname,
+        content: vFile.data.markdown
+      }));
+
+    const miniSearch = new MiniSearch({
+      fields: ['title', 'description', 'content'],
+      storeFields: ['title', 'description', 'pathname']
+    });
+
+    await miniSearch.addAllAsync(documents);
+
+    const filename = join(this.options.outputDir, options.outputDir, 'index.json');
+    await write(filename, JSON.stringify(miniSearch.toJSON()));
     return filename;
   }
 

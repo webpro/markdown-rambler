@@ -63,6 +63,7 @@ export interface RamblerOptions extends Partial<TransferrableOptions> {
   watchDir?: string | string[];
   verbose?: boolean;
   watch?: boolean;
+  search?: boolean | Search;
 
   formatMarkdown?: boolean;
 
@@ -103,6 +104,11 @@ export interface Meta extends PageOptions, TransferrableOptions {
   type: string;
   pathname: string;
 }
+
+type Search = {
+  outputDir: string;
+  filter?: (type: PageType, vFile: VFile) => boolean;
+};
 
 export interface Image {
   src: string;
