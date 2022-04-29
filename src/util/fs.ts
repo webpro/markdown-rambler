@@ -1,7 +1,22 @@
 import { watch, constants } from 'fs';
 import { access, mkdir, readFile, writeFile, copyFile } from 'node:fs/promises';
-import { relative, dirname, join } from 'node:path';
+import { resolve, dirname, join, relative, isAbsolute } from 'node:path';
 import { optimize } from 'svgo';
+
+const isFloating = pathname => !/^[\.\/]/.test(pathname);
+
+const isIndex = filename => /(README|index)\.md$/.test(filename);
+
+export const resolveTargetPathname = (from, to) => {
+  const fromPathname = resolvePathname(from);
+  const [, filename, suffix] = to.match(/(?<filename>[^\?#]*)(?<suffix>.*)/);
+  const toPathname = resolve(fromPathname, ...[isIndex(from) ? '.' : '..'], resolvePathname(filename));
+  return toPathname + suffix;
+};
+
+export const resolvePathname = filename => {
+  return (isFloating(filename) ? '/' : '') + filename.replace(/(README|index)?\.md$/, '').replace(/(.+)\/$/, '$1');
+};
 
 export const ensureDir = async target => {
   const dir = dirname(target);

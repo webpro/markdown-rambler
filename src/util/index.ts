@@ -1,3 +1,4 @@
+import { isAbsolute, join } from 'path';
 import type { VFile, BuildMetaData, FrontMatter } from '../types';
 
 export const groupByType = (vFiles: VFile[]) =>
@@ -15,7 +16,7 @@ const getDefaults = (type, defaults) => {
   return { ...defaults.page, ...defaults[type] };
 };
 
-const resolveFrontMatter = (matter): FrontMatter => {
+const resolveFrontMatter = (matter, vFile): FrontMatter => {
   const obj = {};
   for (const key in matter) {
     switch (key) {
@@ -25,6 +26,7 @@ const resolveFrontMatter = (matter): FrontMatter => {
         break;
       case 'image':
         const image = typeof matter[key] === 'string' ? { src: matter[key] } : matter[key];
+        image.src = isAbsolute(image.src) ? image.src : join(vFile.data.pathname, image.src);
         obj[key] = image;
         break;
       default:
@@ -37,15 +39,16 @@ const resolveFrontMatter = (matter): FrontMatter => {
 
 export const buildMetaData: BuildMetaData = (vFile, type, options) => {
   const defaults = getDefaults(type, options.defaults);
-  const matter = resolveFrontMatter(vFile.data.matter);
   const base = {
     type,
     host: options.host,
+    pathname: vFile.data.pathname,
     name: options.name,
     language: options.language,
     manifest: options.manifest,
     feed: options.feed
   };
+  const matter = resolveFrontMatter(vFile.data.matter, vFile);
   return Object.assign(base, defaults, matter);
 };
 

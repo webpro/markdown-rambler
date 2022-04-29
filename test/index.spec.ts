@@ -158,7 +158,7 @@ Table:
         </table>
       </article>
       <footer>
-        <p>© 2000, <a href="https://publisher.co">PBLSHR</a></p>
+        <p>© 2000, <a href="https://publisher.co/">PBLSHR</a></p>
       </footer>
     </main>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"https://example.org/test"},"author":{"@type":"Person","name":"John Doe","url":"https://john.doe.com"},"publisher":{"@type":"Organization","@id":"https://publisher.co/#organization","name":"PBLSHR","logo":{"@type":"ImageObject","url":"https://cdn.publisher.co/logo.bmp"}},"sameAs":["https://john.doe.org","https://social.doe.com"],"datePublished":"2000-03-01T00:00:00.000Z","dateModified":"2030-01-20T00:00:00.000Z"}</script>

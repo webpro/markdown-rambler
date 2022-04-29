@@ -21,7 +21,7 @@ import { getDocumentTitle, removeDocumentTitle } from './mdast/helpers';
 import defaultTransformers from './hast/transformers';
 import defaultRenderers from './hast/render';
 import { buildMetaData, groupByType } from './util';
-import { write, copy, optimizeSVG, watchDir } from './util/fs';
+import { resolvePathname, write, copy, optimizeSVG, watchDir } from './util/fs';
 import { getStructuredContent } from './util/structured-content';
 import { layout } from './hast/layout';
 
@@ -191,7 +191,7 @@ export class MarkdownRambler {
 
     // Rename to target file path
     const filename = vFile.history.at(0);
-    const pathname = '/' + filename.replace(/(README|index)?\.md$/, '').replace(/(.+)\/$/, '$1');
+    const pathname = resolvePathname(filename);
     vFile = rename(vFile, { dirname: join(outputDir, pathname), stem: 'index', extname: '.html' });
     dbg(vFile, `Rendered file will be written to ${vFile.history.at(-1)}`);
 
@@ -199,11 +199,11 @@ export class MarkdownRambler {
 
     // Populate vFile.data
     matter(vFile);
+    vFile.data.pathname = pathname;
     const meta = buildMetaData(vFile, type, options);
     vFile.data.markdown = String(vFile.value);
     vFile.data.tree = tree;
     vFile.data.meta = meta;
-    vFile.data.meta.pathname = pathname;
     vFile.data.meta.title = meta.title ?? getDocumentTitle(tree);
     vFile.data.structuredContent = getStructuredContent(meta);
     dbg(vFile, `The ${type} "${meta.title}" will be served from ${pathname}`);
