@@ -106,7 +106,7 @@ type Feed = {
 };
 
 type Search = {
-  outputDir: string;
+  outputDir?: string;
   filter?: (type: PageType, vFile: VFile) => boolean;
 };
 

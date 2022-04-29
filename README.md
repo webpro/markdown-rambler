@@ -133,7 +133,7 @@ type Feed = {
 
 ```ts
 type Search = {
-  outputDir: string;
+  outputDir?: string;
   filter?: (type: string, vFile: VFile) => boolean;
 };
 ```
