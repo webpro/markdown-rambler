@@ -13,6 +13,8 @@ export const getMetaTags = (meta: Meta): MetaTag[] => {
 
   tags.push({ property: 'og:type', content: type });
 
+  if (meta.draft) tags.push({ name: 'robots', content: 'noindex' });
+
   if (meta.description) tags.push({ name: 'description', property: 'og:description', content: meta.description });
   if (meta.name) tags.push({ property: 'og:site_name', content: meta.name });
   if (meta.host && meta.pathname) tags.push({ property: 'og:url', content: meta.host + meta.pathname });

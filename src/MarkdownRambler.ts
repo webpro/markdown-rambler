@@ -79,16 +79,15 @@ export class MarkdownRambler {
     const files = await this.getContentFiles();
     const markdownFiles = files.filter(([dir, filename]) => filename.endsWith('.md'));
     const parsedVFiles = await this.parseMarkdownFiles(markdownFiles);
-    const filteredVFiles = parsedVFiles.filter(vFile => !this.isDraft(vFile));
 
     if (this.options.linkFiles) {
-      const files = groupByType(filteredVFiles);
-      filteredVFiles.forEach(vFile => {
+      const files = groupByType(parsedVFiles);
+      parsedVFiles.forEach(vFile => {
         vFile.data.vFiles = files;
       });
     }
 
-    const vFiles = await this.renderMarkdownFiles(filteredVFiles);
+    const vFiles = await this.renderMarkdownFiles(parsedVFiles);
 
     vFiles.map(async vFile => {
       dbg(vFile, `Writing ${vFile.history.at(-1)}`);
@@ -102,18 +101,20 @@ export class MarkdownRambler {
 
     console.log(`✔ ${vFiles.length} pages and ${assetFiles.length} asset files (in ${this.options.outputDir})`);
 
+    const publishedVFiles = vFiles.filter(vFile => !vFile.data.meta.draft);
+
     if (this.options.feed) {
-      const feed = await this.renderFeed(vFiles);
+      const feed = await this.renderFeed(publishedVFiles);
       console.log(`✔ Feed (at ${feed})`);
     }
 
     if (this.options.sitemap) {
-      const sitemap = await this.renderSitemap(vFiles);
+      const sitemap = await this.renderSitemap(publishedVFiles);
       console.log(`✔ Sitemap (at ${sitemap})`);
     }
 
     if (this.options.search) {
-      const search = await this.renderSearchIndex(vFiles);
+      const search = await this.renderSearchIndex(publishedVFiles);
       console.log(`✔ Search index (at ${search})`);
     }
 
@@ -212,10 +213,6 @@ export class MarkdownRambler {
 
   parseMarkdownFiles(files: Files): Promise<VFile[]> {
     return Promise.all(files.map(file => this.parseMarkdownFile(file)));
-  }
-
-  isDraft(vFile) {
-    return vFile.data.meta.draft && process.env.CI;
   }
 
   renderMarkdownFiles(vFiles: VFile[]) {

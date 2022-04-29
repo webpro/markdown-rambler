@@ -171,7 +171,7 @@ Table:
 test('should parse Front Matter and merge with meta data', async () => {
   const rambler = new MarkdownRambler();
   const markdown =
-    '---\ndescription: Markdown matters\npublished: 2022-03-05\nlanguage: en-US\n---\n\n# Essential Matters';
+    '---\ndescription: Markdown matters\npublished: 2022-03-05\nlanguage: en-US\ndraft: true\n---\n\n# Essential Matters';
   const vFile = new VFile({ path: 'test.md', value: markdown });
   const parsedVFile = await rambler.parseMarkdownVFile(vFile);
   const renderedVFile = await rambler.renderMarkdownFile(parsedVFile);
@@ -185,6 +185,7 @@ test('should parse Front Matter and merge with meta data', async () => {
     <title>Essential Matters</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:type" content="website">
+    <meta name="robots" content="noindex">
     <meta name="description" property="og:description" content="Markdown matters">
     <meta property="article:published_time" content="2022-03-05T00:00:00.000Z">
     <link rel="icon" href="/favicon.ico" sizes="any">
