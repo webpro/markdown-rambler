@@ -247,6 +247,11 @@ export class MarkdownRambler {
   async renderFeed(vFiles: VFile[]) {
     if (!this.options.feed) return;
 
+    if (!this.options.host) {
+      this.verbose('Unable to render RSS feed without `host`');
+      return;
+    }
+
     const { filter } = this.options.feed;
 
     const filtered =
