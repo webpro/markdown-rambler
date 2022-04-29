@@ -35,7 +35,7 @@
     "email": "lars@webpro.nl",
     "url": "https://www.webpro.nl"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "globby": "^13.1.1",
     "hastscript": "^7.0.2",
