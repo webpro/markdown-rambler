@@ -301,8 +301,14 @@ export class MarkdownRambler {
   }
 
   async renderSitemap(vFiles: VFile[]) {
+    if (!this.options.host) {
+      this.verbose('Unable to render sitemap without `host`');
+      return;
+    }
+
+    const { host } = this.options;
     const filename = join(this.options.outputDir, 'sitemap.txt');
-    const items = vFiles.map(vFile => vFile.data.meta.pathname);
+    const items = vFiles.map(vFile => host + vFile.data.meta.pathname);
     await write(filename, items.sort().join(EOL) + EOL);
     return filename;
   }
