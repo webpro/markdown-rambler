@@ -1,5 +1,5 @@
 import { watch, constants } from 'fs';
-import { access, mkdir, readFile, writeFile, copyFile } from 'node:fs/promises';
+import { access, mkdir, readFile, writeFile, copyFile, appendFile } from 'node:fs/promises';
 import { resolve, dirname, join, relative, isAbsolute } from 'node:path';
 import { optimize } from 'svgo';
 
@@ -35,6 +35,10 @@ export const write = async (target, output) => {
 export const copy = async (source, target) => {
   await ensureDir(target);
   copyFile(source, target);
+};
+
+export const append = async (source, target) => {
+  await appendFile(target, await readFile(source));
 };
 
 export const optimizeSVG = async (source, target) => {

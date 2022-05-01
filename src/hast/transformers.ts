@@ -17,7 +17,8 @@ const fixRelativeLinks = vFile => url => {
 const defaultTransformers: Transformers = vFile => {
   const { data } = vFile;
   const { meta, structuredContent } = data;
-  const { title, language, scripts: js } = meta;
+  const { title, language, scripts, bundledScripts } = meta;
+  const js = bundledScripts ?? scripts;
   return [
     [urls, fixRelativeLinks(vFile)],
     slug,

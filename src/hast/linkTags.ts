@@ -28,7 +28,8 @@ export const getLinkTags = (meta: Meta): LinkTag[] => {
 
   if (meta.host && meta.pathname) tags.push({ rel: 'canonical', href: meta.host + meta.pathname });
 
-  if (meta.stylesheets) tags.push(...meta.stylesheets.map(href => ({ rel: 'stylesheet', href })));
+  const stylesheets = meta.bundledStylesheets ?? meta.stylesheets;
+  if (stylesheets) tags.push(...stylesheets.map(href => ({ rel: 'stylesheet', href })));
 
   if (meta.icon) {
     const ext = extname(meta.icon.src);

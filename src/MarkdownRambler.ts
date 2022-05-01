@@ -1,7 +1,7 @@
 import './util/at';
 import { EOL } from 'os';
 import { debuglog } from 'util';
-import { join } from 'node:path';
+import { join, extname } from 'node:path';
 import { globby } from 'globby';
 import _ from 'lodash';
 import { unified } from 'unified';
@@ -20,13 +20,13 @@ import defaultConverters from './mdast/convert';
 import { getDocumentTitle, removeDocumentTitle } from './mdast/helpers';
 import defaultTransformers from './hast/transformers';
 import defaultRenderers from './hast/render';
-import { buildMetaData, groupByType } from './util';
-import { resolvePathname, write, copy, optimizeSVG, watchDir } from './util/fs';
+import { buildMetaData, groupByType, unique, ucFirst } from './util';
+import { resolvePathname, write, copy, append, optimizeSVG, watchDir } from './util/fs';
 import { getStructuredContent } from './util/structured-content';
 import { layout } from './hast/layout';
 
 import type { FrozenProcessor } from 'unified';
-import type { File, Files, RamblerOptions } from './types';
+import type { File, Files, RamblerOptions, PageType } from './types';
 
 const debug = debuglog('markdown-rambler');
 
@@ -77,6 +77,10 @@ export class MarkdownRambler {
 
   async run() {
     const files = await this.getContentFiles();
+
+    await this.bundleAssets('stylesheets');
+    await this.bundleAssets('scripts');
+
     const markdownFiles = files.filter(([dir, filename]) => filename.endsWith('.md'));
     const parsedVFiles = await this.parseMarkdownFiles(markdownFiles);
 
@@ -133,6 +137,43 @@ export class MarkdownRambler {
       files.push(result.map(filename => [cwd ?? '', filename]));
     }
     return files.flat();
+  }
+
+  async bundleAssets(assetType) {
+    const bundled = `bundled${ucFirst(assetType)}`;
+    const pageTypes = ['page', ...Object.keys(this.options.defaults)].filter(unique);
+    const assets: Record<PageType, string[]> = {};
+    for (const pageType of pageTypes) {
+      assets[pageType] = assets[pageType] ?? [];
+      if (this.options.defaults[pageType][assetType]) {
+        for (const asset of this.options.defaults[pageType][assetType]) {
+          if (!assets[pageType].includes(asset)) {
+            const source = join('public', asset);
+            const ext = extname(source);
+            const bundle = join(asset, `../${pageType}.bundle${ext}`);
+            const target = join(this.options.outputDir, bundle);
+            if (pageType !== 'page' && assets.page.includes(asset)) {
+              // Skip when asset already in `page` assets
+            } else if (assets[pageType].length === 0) {
+              dbg(source, `Copying ${target} (${asset})`);
+              this.verbose(`Copying ${target} (${asset})`);
+              await copy(source, target);
+              assets[pageType].push(asset);
+              if (pageType === 'page') {
+                this.options.defaults[pageType][bundled] = [bundle];
+              } else {
+                this.options.defaults[pageType][bundled] = [this.options.defaults.page[bundled], bundle];
+              }
+            } else {
+              dbg(source, `Append ${source} to ${target}`);
+              this.verbose(`Append ${source} to ${target}`);
+              await append(source, target);
+              assets[pageType].push(asset);
+            }
+          }
+        }
+      }
+    }
   }
 
   async copyAsset(file: File) {

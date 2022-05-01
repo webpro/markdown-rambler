@@ -82,8 +82,10 @@ export interface PageOptions {
   prefetch?: string;
   published?: string;
   modified?: string;
-  stylesheets: string | string[];
-  scripts: string | string[];
+  stylesheets: string[];
+  bundledStylesheets: string[];
+  scripts: string[];
+  bundledScripts: string[];
   sameAs?: string[];
   draft?: boolean;
   image?: Image;

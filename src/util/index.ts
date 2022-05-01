@@ -54,3 +54,7 @@ export const buildMetaData: BuildMetaData = (vFile, type, options) => {
 
 export const iso = (value?: string | Date): string =>
   !value ? undefined : (typeof value === 'string' ? new Date(value) : value).toISOString();
+
+export const unique = (value, index, self) => self.indexOf(value) === index;
+
+export const ucFirst = (value: string) => value[0].toUpperCase() + value.slice(1);
