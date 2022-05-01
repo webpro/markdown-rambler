@@ -8,15 +8,17 @@ Turns directories with Markdown files into static websites.
 - Powerful and extensible plugins.
 - Zero-config with sane defaults to get started.
 - Directory structure and file names determine the url's.
-- Easily build layouts around the Markdown-based content.
 - **Front Matter** in Markdown to override defaults.
 - Use a page `type` to enable different layouts and plugins.
+- Easily build layouts around the Markdown-based content and their `type`.
 - **Optimize SEO** with HTML documents including (OpenGraph) meta tags and structured content (`application/ld+json`).
-- Mark **drafts** to exclude from being published.
+- **Optimize performance** by bundling assets.
+- Mark **drafts** to exclude from lists (yet available with `<meta name="robots" content="noindex">`)
 - Includes **SVGO** to optimize SVGs assets.
 - Writes **sitemap.txt**.
 - Writes **RSS feed**.
 - Writes **search index** (using MiniMatch).
+- Features a `--watch` mode for auto re-generation.
 
 ## Input
 
