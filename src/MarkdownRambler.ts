@@ -25,7 +25,6 @@ import { resolvePathname, write, copy, append, optimizeSVG, watchDir } from './u
 import { getStructuredContent } from './util/structured-content';
 import { layout } from './hast/layout';
 
-import type { FrozenProcessor } from 'unified';
 import type { File, Files, RamblerOptions, PageType } from './types';
 
 const debug = debuglog('markdown-rambler');
@@ -38,11 +37,9 @@ const dbg = (vFile: VFile | string, text: string) => {
 
 export class MarkdownRambler {
   private options: RamblerOptions;
-  private parser: FrozenProcessor;
 
   constructor(options: RamblerOptions = {}) {
     this.options = Object.freeze(this.setDefaultOptions(options));
-    this.installParser(options);
   }
 
   setDefaultOptions(options) {
@@ -58,12 +55,6 @@ export class MarkdownRambler {
       feed: false,
       search: false
     });
-  }
-
-  installParser(options) {
-    const parsers = options.parsers ?? defaultParsers;
-    const additionalParsers = options.additionalParsers ?? [];
-    this.parser = unified().use([...parsers, ...additionalParsers]);
   }
 
   getTransformers(vFile) {
@@ -217,8 +208,11 @@ export class MarkdownRambler {
     dbg(vFile, `Parsing source file`);
 
     const options = this.options;
-    const parser = this.parser;
-    const outputDir = this.options.outputDir;
+    const outputDir = options.outputDir;
+
+    const parsers = options.parsers ?? defaultParsers;
+    const additionalParsers = options.additionalParsers ?? [];
+    const parser = unified().use([...parsers, ...additionalParsers]);
     const tree = parser.parse(vFile);
 
     if (options.formatMarkdown) {
