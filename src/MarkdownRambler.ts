@@ -69,8 +69,10 @@ export class MarkdownRambler {
   async run() {
     const files = await this.getContentFiles();
 
-    await this.bundleAssets('stylesheets');
-    await this.bundleAssets('scripts');
+    if (!this.options.watch) {
+      await this.bundleAssets('stylesheets');
+      await this.bundleAssets('scripts');
+    }
 
     const markdownFiles = files.filter(([dir, filename]) => filename.endsWith('.md'));
     const parsedVFiles = await this.parseMarkdownFiles(markdownFiles);
@@ -132,9 +134,10 @@ export class MarkdownRambler {
 
   async bundleAssets(assetType) {
     const bundled = `bundled${ucFirst(assetType)}`;
-    const pageTypes = ['page', ...Object.keys(this.options.defaults)].filter(unique);
+    const pageTypes = Object.keys(this.options.defaults);
+    const orderedPageTypes = ['page', ...pageTypes].filter(unique);
     const assets: Record<PageType, string[]> = {};
-    for (const pageType of pageTypes) {
+    for (const pageType of orderedPageTypes) {
       assets[pageType] = assets[pageType] ?? [];
       if (this.options.defaults[pageType][assetType]) {
         for (const asset of this.options.defaults[pageType][assetType]) {
@@ -156,8 +159,8 @@ export class MarkdownRambler {
                 this.options.defaults[pageType][bundled] = [this.options.defaults.page[bundled], bundle];
               }
             } else {
-              dbg(source, `Append ${source} to ${target}`);
-              this.verbose(`Append ${source} to ${target}`);
+              dbg(source, `Appending ${source} to ${target}`);
+              this.verbose(`Appending ${source} to ${target}`);
               await append(source, target);
               assets[pageType].push(asset);
             }

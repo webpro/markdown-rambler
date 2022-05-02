@@ -83,9 +83,7 @@ export interface PageOptions {
   published?: string;
   modified?: string;
   stylesheets: string[];
-  bundledStylesheets: string[];
   scripts: string[];
-  bundledScripts: string[];
   sameAs?: string[];
   draft?: boolean;
   image?: Image;
@@ -97,6 +95,8 @@ export interface PageOptions {
 export interface Meta extends PageOptions, TransferrableOptions {
   type: string;
   pathname: string;
+  bundledStylesheets: string[];
+  bundledScripts: string[];
 }
 
 type Feed = {
