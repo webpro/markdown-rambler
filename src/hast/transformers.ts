@@ -1,4 +1,4 @@
-import { isAbsolute } from 'path';
+import { extname } from 'node:path';
 import urls from 'rehype-urls';
 import slug from 'rehype-slug';
 import autoLinkHeadings from 'rehype-autolink-headings';
@@ -9,9 +9,12 @@ import { getLinkTags } from './linkTags';
 import { resolveTargetPathname } from '../util/fs';
 import type { Transformers } from '../types';
 
-const fixRelativeLinks = vFile => url => {
-  if (url.href.startsWith('http') || url.href.startsWith('mailto') || isAbsolute(url.href) || !url.pathname) return url;
-  return resolveTargetPathname(vFile.history.at(0), url.href);
+const fixRelativeLinks = vFile => (url, node) => {
+  const { href, pathname } = url;
+  if (href.startsWith('.') && (extname(pathname) === '.md' || node.tagName === 'img')) {
+    return resolveTargetPathname(vFile.history.at(0), href);
+  }
+  return url;
 };
 
 const defaultTransformers: Transformers = vFile => {
@@ -20,7 +23,7 @@ const defaultTransformers: Transformers = vFile => {
   const { title, language, scripts, bundledScripts } = meta;
   const js = bundledScripts ?? scripts;
   return [
-    [urls, fixRelativeLinks(vFile)],
+    [() => urls(fixRelativeLinks(vFile))], // Hack to allow rehype-urls plugin again downstream
     slug,
     [autoLinkHeadings, { behavior: 'wrap', test: ['h2', 'h3', 'h4', 'h5', 'h6'] }],
     [doc, { title, language, meta: getMetaTags(meta), link: getLinkTags(meta), js }],
