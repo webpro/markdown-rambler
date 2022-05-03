@@ -104,17 +104,17 @@ export class MarkdownRambler {
 
     if (this.options.feed) {
       const feed = await this.renderFeed(publishedVFiles);
-      console.log(`✔ Feed (at ${feed})`);
+      if (feed) console.log(`✔ Feed (at ${feed})`);
     }
 
     if (this.options.sitemap) {
       const sitemap = await this.renderSitemap(publishedVFiles);
-      console.log(`✔ Sitemap (at ${sitemap})`);
+      if (sitemap) console.log(`✔ Sitemap (at ${sitemap})`);
     }
 
     if (this.options.search) {
       const search = await this.renderSearchIndex(publishedVFiles);
-      console.log(`✔ Search index (at ${search})`);
+      if (search) console.log(`✔ Search index (at ${search})`);
     }
 
     if (this.options.watch) {

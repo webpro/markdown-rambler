@@ -1,6 +1,6 @@
 import { watch, constants } from 'fs';
 import { access, mkdir, readFile, writeFile, copyFile, appendFile } from 'node:fs/promises';
-import { resolve, dirname, join, relative, isAbsolute } from 'node:path';
+import { resolve, dirname, join } from 'node:path';
 import { optimize } from 'svgo';
 
 const isFloating = pathname => !/^[\.\/]/.test(pathname);
