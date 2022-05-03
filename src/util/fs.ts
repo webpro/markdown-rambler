@@ -27,6 +27,15 @@ export const ensureDir = async target => {
   }
 };
 
+export const isDir = async dir => {
+  try {
+    await access(dir, constants.W_OK);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const write = async (target, output) => {
   await ensureDir(target);
   writeFile(target, output);
@@ -62,9 +71,8 @@ export const watchDir = async ({ dir, cb, ignoreDir }) => {
       }
     }
   };
-  try {
-    await access(dir, constants.W_OK);
+  if (await isDir(dir)) {
     watch(dir, { recursive: true }, callback);
     return dir;
-  } catch (error) {}
+  }
 };

@@ -46,6 +46,7 @@ interface TransferrableOptions {
 export interface RamblerOptions extends Partial<TransferrableOptions> {
   contentDir?: string | string[];
   contentFiles?: string | string[];
+  publicDir?: string;
   outputDir?: string;
   watchDir?: string | string[];
   verbose?: boolean;

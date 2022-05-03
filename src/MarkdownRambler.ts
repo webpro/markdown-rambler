@@ -47,6 +47,7 @@ export class MarkdownRambler {
     return _.defaultsDeep(options, {
       contentDir: !options.contentFiles ? 'content' : '.',
       contentFiles: '**/*',
+      publicDir: 'public',
       outputDir: 'dist',
       host: '',
       name: '',
@@ -70,7 +71,7 @@ export class MarkdownRambler {
   async run() {
     const files = await this.getContentFiles();
 
-    if (!this.options.watch) {
+    if (!this.options.watch && this.options.publicDir) {
       await this.bundleAssets('stylesheets');
       await this.bundleAssets('scripts');
     }
@@ -117,14 +118,14 @@ export class MarkdownRambler {
     }
 
     if (this.options.watch) {
-      const watchDirs = await this.watch(this.options.contentDir);
+      const watchDirs = await this.watch([this.options.contentDir, this.options.publicDir].flat().filter(unique));
       watchDirs.forEach(dir => console.log(`▶︎ Watching for changes in ./${dir}`));
     }
   }
 
   async getContentFiles(): Promise<Files> {
-    const dirs = ['public', this.options.contentDir].flat();
-    const glob = [this.options.contentFiles].flat();
+    const dirs = [this.options.publicDir, this.options.contentDir].flat().filter(unique);
+    const glob = [this.options.contentFiles].flat().filter(unique);
     const files = [];
     for (const cwd of dirs) {
       const result = await globby(glob, { cwd, ignore: ['**/node_modules'] });
@@ -143,7 +144,7 @@ export class MarkdownRambler {
       if (this.options.defaults[pageType][assetType]) {
         for (const asset of this.options.defaults[pageType][assetType]) {
           if (!assets[pageType].includes(asset)) {
-            const source = join('public', asset);
+            const source = join(this.options.publicDir, asset);
             const ext = extname(source);
             const bundle = join(asset, `../${pageType}.bundle${ext}`);
             const target = join(this.options.outputDir, bundle);
@@ -376,14 +377,13 @@ export class MarkdownRambler {
     return filename;
   }
 
-  public async watch(dir: string | string[]) {
+  public async watch(dirs: string[]) {
     const ignoreDir = this.options.outputDir;
-    if (dir) {
-      const watchDirs = [dir, 'public'].flat();
-      const dirs = await Promise.all(
-        watchDirs.map(dir => watchDir({ dir, cb: file => this.handleFile(file), ignoreDir }))
+    if (dirs) {
+      const watchDirs = await Promise.all(
+        dirs.map(dir => watchDir({ dir, cb: file => this.handleFile(file), ignoreDir }))
       );
-      return dirs.filter(Boolean);
+      return watchDirs.filter(Boolean);
     }
     return [];
   }
