@@ -42,7 +42,7 @@ test('should parse Markdown and renderHTML document from vFile', async () => {
         ]);
       },
       COPYRIGHT: (node, index, parent, vFile) => {
-        const [year] = vFile.data.meta.published.split('-');
+        const year = vFile.data.meta.published.getFullYear();
         const publisher = vFile.data.meta.publisher;
         return h('footer', h('p', [`© ${year}, `, h('a', { href: publisher.href }, publisher.name)]));
       }
@@ -61,8 +61,8 @@ test('should parse Markdown and renderHTML document from vFile', async () => {
         title: 'Title',
         description: 'Descriptive Copy',
         prefetch: '/prefetch',
-        published: '2000-02-30',
-        modified: '2030-01-20',
+        published: new Date('2000-02-30'),
+        modified: new Date('2030-01-20'),
         stylesheets: ['/css/stylesheet.css', '/css/fonts.css'],
         sameAs: ['https://john.doe.org', 'https://social.doe.com'],
         draft: false,

@@ -15,6 +15,9 @@ export type Tree = ReturnType<FrozenProcessor['parse']>;
 
 export type Transformers = ((vFile: VFile) => PluggableList) | PluggableList;
 
+export type PageType = 'page' | string;
+export type PageTypes = PageType[];
+
 export type FrontMatter = Partial<Meta>;
 
 export type LayoutFn = (node: Parent['children'], meta: Meta) => Element | Element[];
@@ -25,19 +28,11 @@ declare module 'VFile' {
     tree: Tree;
     structuredContent: Schema;
     meta: Meta;
-  }
-  interface VFileDataRegistry {
-    tree: Tree;
-    matter: FrontMatter;
-    structuredContent: Schema;
-    meta: Meta;
+    vFiles: Record<PageType, VFile[]>;
   }
 }
 
 export type BuildMetaData = (vFile: VFile, type: PageType, options: RamblerOptions) => Meta;
-
-export type PageType = 'page' | string;
-export type PageTypes = PageType[];
 
 interface TransferrableOptions {
   host: string;
@@ -80,8 +75,8 @@ export interface PageOptions {
   title: string;
   description?: string;
   prefetch?: string;
-  published?: string;
-  modified?: string;
+  published?: Date;
+  modified?: Date;
   stylesheets: string[];
   scripts: string[];
   sameAs?: string[];
