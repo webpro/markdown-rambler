@@ -71,20 +71,24 @@ And all pathnames in `/sitemap.txt`:
 /blog
 ```
 
+## Tests
+
+See [the tests](./test/index.spec.ts) to get an impression of the conversion from Markdown to HTML.
+
 ## Options
 
 ### Overview
 
 #### File Structure & Output
 
-| Option         | Type                 | Default value           | Description                                                                        |
-| -------------- | -------------------- | ----------------------- | ---------------------------------------------------------------------------------- |
-| `contentFiles` | `string \| string[]` | `'**/*'`                | Should include assets (non-Markdown files) as well.                                |
-| `contentDir`   | `string \| string[]` | `['public', 'content']` | `'content'` is only added when `contentFiles` is not provided.                     |
-| `outputDir`    | `string`             | `'dist'`                | All pages and assets are written into this directory                               |
-| `sitemap`      | `boolean`            | `true`                  | Adds `sitemap.txt`                                                                 |
-| `feed`         | [`Feed`](#feed)      | `false`                 | Generates RSS XML file and `<link rel="alternate" type="application/rss+xml" ...>` |
-| `search`       | [`Search`](#search)  | `false`                 | Generates MiniSearch index                                                         |
+| Option         | Type                 | Default value           | Description                        |
+| -------------- | -------------------- | ----------------------- | ---------------------------------- |
+| `contentFiles` | `string \| string[]` | `'**/*'`                | Include Markdown and assets        |
+| `contentDir`   | `string \| string[]` | `['public', 'content']` | Directories containing the sources |
+| `outputDir`    | `string`             | `'dist'`                | Output directory                   |
+| `sitemap`      | `boolean`            | `true`                  | Generates `sitemap.txt`            |
+| `feed`         | [`Feed`](#feed)      | `false`                 | Generates `feed.xml` (RSS)         |
+| `search`       | [`Search`](#search)  | `false`                 | Generates MiniSearch index         |
 
 #### Flags
 
@@ -96,25 +100,27 @@ And all pathnames in `/sitemap.txt`:
 
 #### Content
 
-| Option                  | Type                            | Default value | Description                                                                         |
-| ----------------------- | ------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
-| `host`                  | `string`                        | `''`          | Provide this for canonical url's and in meta data, etc.                             |
-| `name`                  | `string`                        | `''`          | Website name (e.g. `<meta property="og:site_name" content="{name}">`)               |
-| `language`              | `string`                        | `'en'`        | Website language (e.g. `'fr-BE'`)                                                   |
-| `manifest`              | `false \| string`               | `false`       | Adds `<link rel="manifest" href="{manifest}">`                                      |
-| `type`                  | [`TypeFn`](#type)               | `page`        | Adds `type` property to meta data for use in layouts and plugins (e.g. `'article'`) |
-| [`defaults`](#defaults) | `Record<PageType, PageOptions>` | `undefined`   | Default meta data for each document of any page type                                |
+| Option                  | Type                            | Default value | Description                                            |
+| ----------------------- | ------------------------------- | ------------- | ------------------------------------------------------ |
+| `host`                  | `string`                        | `''`          | Host (e.g. `'https://example.org'`)                    |
+| `name`                  | `string`                        | `''`          | Website name                                           |
+| `language`              | `string`                        | `'en'`        | Website language (e.g. `'fr-BE'`)                      |
+| `manifest`              | `false \| string`               | `false`       | Link to PWA manifest file                              |
+| `type`                  | [`TypeFn`](#type)               | `page`        | Add `type` to each page `meta` data (e.g. `'article'`) |
+| [`defaults`](#defaults) | `Record<PageType, PageOptions>` | `undefined`   | Default meta data for each document                    |
 
 #### Plugins
 
-| Option                          | Type                  | Default value                   | Description                                                             |
-| ------------------------------- | --------------------- | ------------------------------- | ----------------------------------------------------------------------- |
-| [`parsers`](#parsers)           | `Pluggable[]`         | [`parsers`](#parsers)           | Remark parsers                                                          |
-| [`additionalParsers`](#parsers) | `Pluggable[]`         | [`additionalParsers`](#parsers) | Additional remark parsers (on top of `parsers`)                         |
-| [`converters`](#converters)     | `Pluggable[]`         | [`converters`](#converters)     | Plugin to convert mdast (1) to hast (2)                                 |
-| [`transformers`](#transformers) | `Pluggable[]`         | [`transformers`](#transformers) | Transformers applied to the hast                                        |
-| [`renderers`](#renderers)       | `Pluggable[]`         | [`renderers`](#renderers)       | Plugins to render (stringify) the hast                                  |
-| [`directives`](#directives)     | `Record<string, any>` | `undefined`                     | Directives to extend Markdown syntax (e.g. `::TOC` or `:::div.wrapper`) |
+In order of exection:
+
+| Option                                        | Type                  | Default value                     | Description                            |
+| --------------------------------------------- | --------------------- | --------------------------------- | -------------------------------------- |
+| [`parsers`](#parsers)                         | `Pluggable[]`         | [`parsers`](#parsers)             | Remark parsers                         |
+| [`directives`](#directives)                   | `Record<string, any>` | `undefined`                       | Directives to extend Markdown syntax   |
+| [`remarkPlugins`](#remark-plugins)            | `Pluggable[]`         | [`remarkPlugins`](#remarkPlugins) | Additional remark plugins              |
+| [`remarkRehypeOptions`](#remarkrehypeoptions) | `RemarkRehypeOptions` | `{}`                              | Options for remark-rehype              |
+| [`rehypePlugins`](#rehype-plugins)            | `Pluggable[]`         | [`rehypePlugins`](#rehypePlugins) | Additional rehype plugins              |
+| [`renderers`](#renderers)                     | `Pluggable[]`         | [`renderers`](#renderers)         | Plugins to render (stringify) the hast |
 
 1. mdast: Markdown Abstract Syntax Tree
 2. hast: HyperText (HTML) AST
@@ -159,7 +165,16 @@ example of a client script to use the search index:
 })();
 ```
 
-The script(s) can be added to e.g. the `public` folder and added to the `defaults.page.scripts` array.
+The script(s) can be added to e.g. the `public` folder and its path to the `defaults.page.scripts` array.
+
+### Format Markdown
+
+Set `formatMarkdown: true` and the following plugins will be applied to the Markdown source files:
+
+- [remark-prettier](https://github.com/remcohaszing/remark-prettier) to format the document
+- [remark-reference-links](https://github.com/remarkjs/remark-reference-links) to turn `[text](url)` into `[text][ref]`
+  (and add definitions to the end)
+- [order-links](./src/unist/order-links.ts) to order the definitions
 
 ### Type
 
@@ -175,91 +190,15 @@ Example:
 }
 ```
 
-### Unified Plugins
-
-#### Parsers
-
-- [remark-parse](https://github.com/remarkjs/remark/tree/main/packages/remark-parse)
-- [remark-frontmatter](https://github.com/remarkjs/remark-frontmatter)
-- [table](./src/mdast/table.ts)
-- [remark-directive](https://github.com/remarkjs/remark-directive) (also see [Directives](#directives))
-
-These can be replaced with different `parsers`, or extended using `additionalParsers`.
-
-#### Converters
-
-- [remark-rehype](https://github.com/remarkjs/remark-rehype)
-
-Use the `converters` option to replace this default converter plugin.
-
-#### Transformers
-
-- [rehype-autolink-headings](https://github.com/rehypejs/rehype-autolink-headings) (only wraps h2-h6)
-- [rehype-slug](https://github.com/rehypejs/rehype-slug)
-- [rehype-document](https://github.com/rehypejs/rehype-document)
-- [JSON-LD](./src/util/structured-content.ts) (structured content) in a
-  [<script type="application/ld+json">{}</script>](./src/hast/transformers.ts).
-
-Use the `transformers` option to add transformer plugins.
-
-#### Renderers
-
-- [rehype-format](https://github.com/rehypejs/rehype-format)
-- [rehype-stringify](https://github.com/rehypejs/rehype/tree/main/packages/rehype-stringify)
-
-Use the `renderers` option to replace these default render plugins.
-
-### Directives
-
-Directives are a powerful way to extend the Markdown syntax. The (implemented) proposal consists of inline (`:`), leaf
-(`::`) and container (`:::`) block directives.
-
-```md
-::ASIDE
-
-# Header
-
-:::div{.wrapper}
-
-Content with :abbr[HTML]{title="HyperText Markup Language"}
-
-:::
-```
-
-The inline and container directives are readily available. To use a leaf block directive, pass an object with the
-directive as a key, and a function that returns a `hast` node. The function is much like an AST visitor function, and
-adds the `vFile` argument for convenience:
-
-```ts
-type DirectiveVisitor = (node: Element, index: number, parent: Parent, vFile: VFile) => Element;
-```
-
-```ts
-const insertAside = (node, index, parent, vFile) => {
-  return h('aside', { class: 'custom' }, 'news');
-};
-
-const directives = {
-  ASIDE: insertAside
-};
-```
-
-This will result in this HTML output:
-
-```html
-<aside class="custom">news</aside>
-<h1>Header</h1>
-<div class="wrapper">Content with <abbr title="HyperText Markup Language">HTML</abbr></div>
-```
-
 ### Defaults
 
-Sets default for each type of apge. By default there's only the `page` type. Example:
+Sets default for each type of page. By default there's only the `page` type. Example:
 
 ```js
 const options = {
   defaults: {
     page: {
+      layout: '[See "Layout" below]'
       stylesheets: ['/css/stylesheet.css'],
       author: {
         name: 'Lars Kappert',
@@ -310,10 +249,10 @@ The merged meta data will be used in the meta tags and structured content, and i
 - The `author.name` adds `<meta name="author" content="Lars Kappert">`
 - The `prefetch` value will add `<link rel="prefetch" href="/blog">`
 
-### Layouts
+#### Layout
 
 Each page type can have its own layout to wrap the content. Render `${node}` somewhere, and use all of the page's meta
-data that was provided by Markdown Rambler and yourself:
+data that was provided by Markdown Rambler, merged in with the provided default configuration:
 
 ```ts
 import { html } from 'markdown-rambler';
@@ -332,11 +271,91 @@ export default (node, meta) => {
 };
 ```
 
-## Format Markdown
+In this example, the `class` field of the Front Matter of each Markdown file would be added to the `<main>` element,
+while the `default.page.class` option could serve as a fallback `class` value.
 
-Set `formatMarkdown: true` and the following plugins will be applied to the Markdown source files:
+### Plugins
 
-- [remark-prettier](https://github.com/remcohaszing/remark-prettier) to format the document
-- [remark-reference-links](https://github.com/remarkjs/remark-reference-links) to turn `[text](url)` into `[text][ref]`
-  (and add definitions to the end)
-- [order-links](./src/unist/order-links.ts) to order the definitions
+#### Parsers
+
+The default remark plugins:
+
+- [remark-parse](https://github.com/remarkjs/remark/tree/main/packages/remark-parse)
+- [remark-frontmatter](https://github.com/remarkjs/remark-frontmatter)
+- [table](./src/mdast/table.ts)
+- [remark-directive](https://github.com/remarkjs/remark-directive) (also see [Directives](#directives))
+
+These can be entirely replaced with different `parsers`, or extended using [remarkPlugins](#remark-plugins).
+
+#### remark Plugins
+
+Use `remarkPlugins` to add [remark plugins](https://github.com/remarkjs/remark/blob/main/doc/plugins.md) (to work with
+the mdast before it is converted to hast).
+
+#### remarkRehypeOptions
+
+Use `remarkRehypeOptions` to pass [options](https://github.com/remarkjs/remark-rehype#options) to
+[remark-rehype](https://github.com/remarkjs/remark-rehype).
+
+#### rehype Plugins
+
+The default rehype plugins:
+
+- [rehype-autolink-headings](https://github.com/rehypejs/rehype-autolink-headings) (only wraps h2-h6)
+- [rehype-slug](https://github.com/rehypejs/rehype-slug)
+- [rehype-document](https://github.com/rehypejs/rehype-document)
+- [JSON-LD](./src/util/structured-content.ts) (structured content) in a
+  [<script type="application/ld+json">{}</script>](./src/hast/transformers.ts).
+
+Use `rehypePlugins` to add [rehype plugins](https://github.com/rehypejs/rehype/blob/main/doc/plugins.md) (to work with
+the hast after it is converted from mdast).
+
+#### Renderers
+
+- [rehype-format](https://github.com/rehypejs/rehype-format)
+- [rehype-stringify](https://github.com/rehypejs/rehype/tree/main/packages/rehype-stringify)
+
+Use the `renderers` option to replace these default render plugins.
+
+### Directives
+
+Directives are a powerful way to extend the Markdown syntax. The (implemented) proposal consists of inline (`:`), leaf
+(`::`) and container (`:::`) block directives.
+
+```md
+::ASIDE
+
+# Header
+
+:::div{.wrapper}
+
+Content with :abbr[HTML]{title="HyperText Markup Language"}
+
+:::
+```
+
+The inline and container directives are readily available. To use a leaf block directive, pass an object with the
+directive as a key, and a function that returns a `hast` node. The function is much like an AST visitor function, and
+adds the `vFile` argument for convenience:
+
+```ts
+type DirectiveVisitor = (node: Element, index: number, parent: Parent, vFile: VFile) => Element;
+```
+
+```ts
+const insertAside = (node, index, parent, vFile) => {
+  return h('aside', { class: 'custom' }, 'news');
+};
+
+const directives = {
+  ASIDE: insertAside
+};
+```
+
+This will result in this HTML output:
+
+```html
+<aside class="custom">news</aside>
+<h1>Header</h1>
+<div class="wrapper">Content with <abbr title="HyperText Markup Language">HTML</abbr></div>
+```
