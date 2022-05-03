@@ -12,7 +12,7 @@ Turns directories with Markdown files into static websites.
 - Use a page `type` to enable different layouts and plugins.
 - Easily build layouts around the Markdown-based content and their `type`.
 - **Optimize SEO** with HTML documents including (OpenGraph) meta tags and structured content (`application/ld+json`).
-- **Optimize performance** by bundling assets.
+- **Optimize performance** by bundling CSS and JS assets.
 - Mark **drafts** to exclude from lists (yet available with `<meta name="robots" content="noindex">`)
 - Includes **SVGO** to optimize SVGs assets.
 - Writes **sitemap.txt**.
@@ -81,14 +81,15 @@ See [the tests](./test/index.spec.ts) to get an impression of the conversion fro
 
 #### File Structure & Output
 
-| Option         | Type                 | Default value           | Description                        |
-| -------------- | -------------------- | ----------------------- | ---------------------------------- |
-| `contentFiles` | `string \| string[]` | `'**/*'`                | Include Markdown and assets        |
-| `contentDir`   | `string \| string[]` | `['public', 'content']` | Directories containing the sources |
-| `outputDir`    | `string`             | `'dist'`                | Output directory                   |
-| `sitemap`      | `boolean`            | `true`                  | Generates `sitemap.txt`            |
-| `feed`         | [`Feed`](#feed)      | `false`                 | Generates `feed.xml` (RSS)         |
-| `search`       | [`Search`](#search)  | `false`                 | Generates MiniSearch index         |
+| Option         | Type                 | Default value | Description                        |
+| -------------- | -------------------- | ------------- | ---------------------------------- |
+| `contentFiles` | `string \| string[]` | `'**/*'`      | Include Markdown and assets        |
+| `contentDir`   | `string \| string[]` | `['content']` | Directories containing Markdown    |
+| `publicDir`    | `string`             | `'public'`    | Directory containing public assets |
+| `outputDir`    | `string`             | `'dist'`      | Output directory                   |
+| `sitemap`      | `boolean`            | `true`        | Generates `sitemap.txt`            |
+| `feed`         | [`Feed`](#feed)      | `false`       | Generates `feed.xml` (RSS)         |
+| `search`       | [`Search`](#search)  | `false`       | Generates MiniSearch index         |
 
 #### Flags
 
