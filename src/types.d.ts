@@ -1,5 +1,5 @@
-import type { Pluggable, PluggableList } from 'unified';
-import type { FrozenProcessor } from 'unified';
+import type { PluggableList, FrozenProcessor } from 'unified';
+import { Options as RemarkRehypeOptions } from 'remark-rehype';
 import type { Parent, Element } from 'hast';
 import type { Thing, WithContext } from 'schema-dts';
 import type { VFile } from 'vfile';
@@ -64,10 +64,10 @@ export interface RamblerOptions extends Partial<TransferrableOptions> {
   type?: (filename: string, matter: FrontMatter) => PageType;
 
   parsers?: PluggableList;
-  additionalParsers?: PluggableList;
-  converters?: PluggableList;
-  transformers?: Transformers;
-  renderers?: Pluggable[];
+  remarkPlugins?: PluggableList;
+  remarkRehypeOptions?: RemarkRehypeOptions;
+  rehypePlugins?: Transformers;
+  renderers?: PluggableList;
 
   directives?: Record<string, any>;
   defaults?: Record<PageType, Partial<PageOptions>>;

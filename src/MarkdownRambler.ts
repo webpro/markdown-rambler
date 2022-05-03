@@ -10,13 +10,14 @@ import { VFile } from 'vfile';
 import { matter } from 'vfile-matter';
 import { rename } from 'vfile-rename';
 import { mkdirp } from 'vfile-mkdirp';
+import remark2rehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
 import { rss } from 'xast-util-feed';
 import { toXml } from 'xast-util-to-xml';
 import MiniSearch from 'minisearch';
 import defaultParsers from './mdast/parsers';
 import { transformDirectives } from './mdast/parsers';
 import formatters from './mdast/formatters';
-import defaultConverters from './mdast/convert';
 import { getDocumentTitle, removeDocumentTitle } from './mdast/helpers';
 import defaultTransformers from './hast/transformers';
 import defaultRenderers from './hast/render';
@@ -58,10 +59,10 @@ export class MarkdownRambler {
   }
 
   getTransformers(vFile) {
-    const { transformers = [] } = this.options;
+    const { rehypePlugins = [] } = this.options;
     const plugins = [
       typeof defaultTransformers === 'function' ? defaultTransformers(vFile) : defaultTransformers,
-      typeof transformers === 'function' ? transformers(vFile) : transformers
+      typeof rehypePlugins === 'function' ? rehypePlugins(vFile) : rehypePlugins
     ];
     return plugins.flat();
   }
@@ -214,8 +215,8 @@ export class MarkdownRambler {
     const outputDir = options.outputDir;
 
     const parsers = options.parsers ?? defaultParsers;
-    const additionalParsers = options.additionalParsers ?? [];
-    const parser = unified().use([...parsers, ...additionalParsers]);
+    const remarkPlugins = options.remarkPlugins ?? [];
+    const parser = unified().use([...parsers, ...remarkPlugins]);
     const tree = parser.parse(vFile);
 
     if (options.formatMarkdown) {
@@ -261,13 +262,12 @@ export class MarkdownRambler {
     dbg(vFile, `Rendering ${vFile.history.at(-1)}`);
     const { options } = this;
 
-    const converters = options.converters ?? defaultConverters;
     const transformers = this.getTransformers(vFile);
     const renderers = options.renderers ?? defaultRenderers;
 
     const processor = unified()
       .use(transformDirectives, options.directives ? options.directives : false)
-      .use(converters)
+      .use(remark2rehype, options.remarkRehypeOptions ?? {})
       .use(layout, vFile.data.meta.layout ? { layout: vFile.data.meta.layout } : false)
       .use(transformers)
       .use(renderers);
@@ -297,7 +297,7 @@ export class MarkdownRambler {
         .sort((a, b) => +new Date(b.data.meta.published) - +new Date(a.data.meta.published))
         .slice(0, 10)
         .map(async vFile => {
-          const plugins = [removeDocumentTitle, ...defaultConverters, defaultRenderers[1]];
+          const plugins = [removeDocumentTitle, remark2rehype, rehypeStringify];
           const processor = unified().use(plugins);
           const tree = await processor.run(vFile.data.tree);
           const html = processor.stringify(tree) as string;
