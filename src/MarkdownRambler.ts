@@ -310,7 +310,8 @@ export class MarkdownRambler {
             author: meta.author,
             url: join(this.options.host, meta.pathname),
             modified: meta.modified,
-            published: meta.published
+            published: meta.published,
+            tags: meta.tags
           };
         })
     );
@@ -326,7 +327,7 @@ export class MarkdownRambler {
         title,
         description,
         author,
-        tags: [],
+        tags: this.options.feed.tags,
         url: this.options.host,
         lang: this.options.language,
         feedUrl: join(this.options.host, this.options.feed.pathname)

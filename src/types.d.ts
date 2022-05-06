@@ -83,7 +83,7 @@ export interface PageOptions {
   sameAs?: string[];
   draft?: boolean;
   image?: Image;
-  tags?: string | string[];
+  tags?: string[];
   logo: Logo;
   icon: Image;
 }
@@ -100,6 +100,7 @@ type Feed = {
   title: string;
   description?: string;
   author?: string;
+  tags?: string[];
   filter?: (type: PageType, vFile: VFile) => boolean;
 };
 

@@ -134,6 +134,7 @@ type Feed = {
   title: string;
   description?: string;
   author?: string;
+  tags?: string[];
   filter?: (type: string, vFile: VFile) => boolean;
 };
 ```
