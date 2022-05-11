@@ -43,6 +43,7 @@ export const buildMetaData: BuildMetaData = (vFile, type, options) => {
     type,
     host: options.host,
     pathname: vFile.data.pathname,
+    href: options.host + vFile.data.pathname,
     name: options.name,
     language: options.language,
     manifest: options.manifest,

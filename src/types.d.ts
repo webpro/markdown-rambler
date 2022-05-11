@@ -91,6 +91,7 @@ export interface PageOptions {
 export interface Meta extends PageOptions, TransferrableOptions {
   type: string;
   pathname: string;
+  href: string;
   bundledStylesheets: string[];
   bundledScripts: string[];
 }

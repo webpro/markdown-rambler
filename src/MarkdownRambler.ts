@@ -348,7 +348,7 @@ export class MarkdownRambler {
 
     const { host } = this.options;
     const filename = join(this.options.outputDir, 'sitemap.txt');
-    const items = vFiles.map(vFile => host + vFile.data.meta.pathname);
+    const items = vFiles.map(vFile => vFile.data.meta.href);
     await write(filename, items.sort().join(EOL) + EOL);
     return filename;
   }
