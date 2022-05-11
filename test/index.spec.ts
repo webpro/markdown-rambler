@@ -25,7 +25,7 @@ test('should parse basic Markdown and render minimal HTML document from vFile', 
   </head>
   <body>
     <h1 id="hello-world">Hello, world!</h1>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"inLanguage":"en"}</script>
   </body>
 </html>
 `
@@ -161,7 +161,7 @@ Table:
         <p>© 2000, <a href="https://publisher.co/">PBLSHR</a></p>
       </footer>
     </main>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"https://example.org/test"},"author":{"@type":"Person","name":"John Doe","url":"https://john.doe.com"},"publisher":{"@type":"Organization","@id":"https://publisher.co/#organization","name":"PBLSHR","logo":{"@type":"ImageObject","url":"https://cdn.publisher.co/logo.bmp"}},"sameAs":["https://john.doe.org","https://social.doe.com"],"datePublished":"2000-03-01T00:00:00.000Z","dateModified":"2030-01-20T00:00:00.000Z"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"https://example.org/test"},"datePublished":"2000-03-01T00:00:00.000Z","dateModified":"2030-01-20T00:00:00.000Z","inLanguage":"en","author":{"@type":"Person","name":"John Doe","url":"https://john.doe.com"},"publisher":{"@type":"Organization","@id":"https://publisher.co/#organization","name":"PBLSHR","logo":{"@type":"ImageObject","url":"https://cdn.publisher.co/logo.bmp"}},"sameAs":["https://john.doe.org","https://social.doe.com"]}</script>
   </body>
 </html>
 `
@@ -193,7 +193,7 @@ test('should parse Front Matter and merge with meta data', async () => {
   </head>
   <body>
     <h1 id="essential-matters">Essential Matters</h1>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"datePublished":"2022-03-05T00:00:00.000Z"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"datePublished":"2022-03-05T00:00:00.000Z","inLanguage":"en-US"}</script>
   </body>
 </html>
 `
@@ -235,7 +235,7 @@ test('should add article type, and use for default values with layout', async ()
       <h2 id="another-section"><a href="#another-section">Another Section</a></h2>
       <p>Words are here.</p>
     </article>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"headline":"An Article"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"inLanguage":"en","headline":"An Article"}</script>
   </body>
 </html>
 `

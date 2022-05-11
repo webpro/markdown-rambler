@@ -5,10 +5,7 @@ import type { Schema, Meta } from '../types';
 const getPage = (meta: Meta, base) =>
   _.merge({}, base, {
     '@type': 'WebSite',
-    sameAs: meta.sameAs,
-    datePublished: iso(meta.published),
-    dateModified: iso(meta.modified),
-    mainEntityOfPage: { '@id': meta.host + meta.pathname }
+    sameAs: meta.sameAs
   });
 
 const getArticle = (meta: Meta, base) => {
@@ -19,10 +16,7 @@ const getArticle = (meta: Meta, base) => {
     {
       '@type': 'Article',
       headline: meta.title,
-      description: meta.description,
-      datePublished: iso(meta.published),
-      dateModified: iso(meta.modified),
-      mainEntityOfPage: { '@id': meta.host + meta.pathname }
+      description: meta.description
     },
     image ? { image } : {}
   );
@@ -32,8 +26,15 @@ export const getStructuredContent = (meta: Meta): Schema => {
   const base: Schema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    mainEntityOfPage: { '@type': 'WebPage' }
+    mainEntityOfPage: { '@type': 'WebPage', '@id': meta.href },
+    datePublished: iso(meta.published),
+    dateModified: iso(meta.modified),
+    inLanguage: meta.language
   };
+
+  if (meta.tags?.length > 0) {
+    base.keywords = meta.tags.join(',');
+  }
 
   if (meta.author) {
     base.author = { '@type': 'Person', name: meta.author.name, url: meta.author.href };
