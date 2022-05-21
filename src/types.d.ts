@@ -86,6 +86,9 @@ export interface PageOptions {
   tags?: string[];
   logo: Logo;
   icon: Image;
+  structuredContent?: {
+    '@type': 'WebSite' | 'Article';
+  };
 }
 
 export interface Meta extends PageOptions, TransferrableOptions {

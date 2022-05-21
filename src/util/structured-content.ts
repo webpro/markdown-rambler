@@ -3,10 +3,15 @@ import { iso } from '.';
 import type { Schema, Meta } from '../types';
 
 const getPage = (meta: Meta, base) =>
-  _.merge({}, base, {
-    '@type': 'WebSite',
-    sameAs: meta.sameAs
-  });
+  _.merge(
+    {},
+    base,
+    {
+      '@type': 'WebSite',
+      sameAs: meta.sameAs
+    },
+    meta.structuredContent
+  );
 
 const getArticle = (meta: Meta, base) => {
   const image = meta.image?.src || meta.publisher?.logo?.src;
@@ -18,7 +23,8 @@ const getArticle = (meta: Meta, base) => {
       headline: meta.title,
       description: meta.description
     },
-    image ? { image } : {}
+    image ? { image } : {},
+    meta.structuredContent
   );
 };
 
@@ -49,7 +55,9 @@ export const getStructuredContent = (meta: Meta): Schema => {
     };
   }
 
-  switch (meta.type) {
+  const type = meta.structuredContent?.['@type']?.toLowerCase() ?? meta.type;
+
+  switch (type) {
     case 'article':
       return getArticle(meta, base);
     default:
