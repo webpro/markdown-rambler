@@ -251,6 +251,8 @@ The merged meta data will be used in the meta tags and structured content, and i
 - The `author.name` adds `<meta name="author" content="Lars Kappert">`
 - The `prefetch` value will add `<link rel="prefetch" href="/blog">`
 
+See the [`PageOptions` type](./src/types.d.ts) for details.
+
 #### Layout
 
 Each page type can have its own layout to wrap the content. Render `${node}` somewhere, and use all of the page's meta
