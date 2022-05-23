@@ -134,7 +134,7 @@ export class MarkdownRambler {
     return files.flat();
   }
 
-  async bundleAssets(assetType) {
+  async bundleAssets(assetType: 'stylesheets' | 'scripts') {
     const bundled = `bundled${ucFirst(assetType)}`;
     const pageTypes = Object.keys(this.options.defaults);
     const orderedPageTypes = ['page', ...pageTypes].filter(unique);
@@ -158,7 +158,7 @@ export class MarkdownRambler {
               if (pageType === 'page') {
                 this.options.defaults[pageType][bundled] = [bundle];
               } else {
-                this.options.defaults[pageType][bundled] = [this.options.defaults.page[bundled], bundle];
+                this.options.defaults[pageType][bundled] = [this.options.defaults.page[bundled][0], bundle];
               }
             } else {
               dbg(source, `Appending ${source} to ${target}`);

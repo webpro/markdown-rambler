@@ -30,6 +30,7 @@ export const getLinkTags = (meta: Meta): LinkTag[] => {
 
   const stylesheets = meta.bundledStylesheets ?? meta.stylesheets;
   if (stylesheets) tags.push(...stylesheets.map(href => ({ rel: 'stylesheet', href })));
+  if (meta.pageStylesheets) tags.push(...meta.pageStylesheets.map(href => ({ rel: 'stylesheet', href })));
 
   if (meta.icon) {
     const ext = extname(meta.icon.src);

@@ -20,8 +20,8 @@ const fixRelativeLinks = vFile => (url, node) => {
 const defaultTransformers: Transformers = vFile => {
   const { data } = vFile;
   const { meta, structuredContent } = data;
-  const { title, language, scripts, bundledScripts } = meta;
-  const js = bundledScripts ?? scripts;
+  const { title, language, scripts, bundledScripts, pageScripts } = meta;
+  const js = [...(bundledScripts ?? scripts ?? []), ...(pageScripts ?? [])];
   return [
     [() => urls(fixRelativeLinks(vFile))], // Hack to allow rehype-urls plugin again downstream
     slug,

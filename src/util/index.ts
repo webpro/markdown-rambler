@@ -50,7 +50,11 @@ export const buildMetaData: BuildMetaData = (vFile, type, options) => {
     feed: options.feed
   };
   const matter = resolveFrontMatter(vFile.data.matter, vFile);
-  return Object.assign(base, defaults, matter);
+  const pageStylesheets = typeof matter.stylesheets === 'string' ? [matter.stylesheets] : matter.stylesheets ?? [];
+  const pageScripts = typeof matter.scripts === 'string' ? [matter.scripts] : matter.scripts ?? [];
+  delete matter.stylesheets; // The pageStylesheets will be added separately (unbundled)
+  delete matter.scripts; // the pageScripts will be added separately (unbundled)
+  return Object.assign(base, defaults, matter, { pageStylesheets, pageScripts });
 };
 
 export const iso = (value?: string | Date): string =>

@@ -97,6 +97,8 @@ export interface Meta extends PageOptions, TransferrableOptions {
   href: string;
   bundledStylesheets: string[];
   bundledScripts: string[];
+  pageStylesheets: string[];
+  pageScripts: string[];
 }
 
 type Feed = {
