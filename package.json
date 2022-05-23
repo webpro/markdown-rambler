@@ -1,6 +1,6 @@
 {
   "name": "markdown-rambler",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Yet another opinionated & powerful static site generator.",
   "main": "dist/index.js",
   "type": "module",
