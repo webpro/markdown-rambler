@@ -89,6 +89,7 @@ export interface PageOptions {
   structuredContent?: {
     '@type': 'WebSite' | 'Article';
   };
+  [key: string]: unknown;
 }
 
 export interface Meta extends PageOptions, TransferrableOptions {
