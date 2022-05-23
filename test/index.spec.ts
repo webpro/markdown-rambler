@@ -121,7 +121,7 @@ Table:
     <link rel="stylesheet" href="/css/fonts.css">
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="prefetch" href="/prefetch">
-    <link rel="alternate" type="application/rss+xml" href="https:/example.org/rss.xml" title="Latest Does">
+    <link rel="alternate" type="application/rss+xml" href="https://example.org/rss.xml" title="Latest Does">
   </head>
   <body>
     <header>

@@ -46,7 +46,7 @@ export const getLinkTags = (meta: Meta): LinkTag[] => {
     tags.push({
       rel: 'alternate',
       type: 'application/rss+xml',
-      href: join(meta.host, meta.feed.pathname),
+      href: meta.host + meta.feed.pathname,
       title: meta.feed.title
     });
   }
