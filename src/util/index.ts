@@ -39,22 +39,28 @@ const resolveFrontMatter = (matter, vFile): FrontMatter => {
 
 export const buildMetaData: BuildMetaData = (vFile, type, options) => {
   const defaults = getDefaults(type, options.defaults);
+  const { pathname } = vFile.data;
   const base = {
     type,
     host: options.host,
-    pathname: vFile.data.pathname,
-    href: options.host + vFile.data.pathname,
+    pathname,
+    href: options.host + pathname,
     name: options.name,
     language: options.language,
     manifest: options.manifest,
     feed: options.feed
   };
   const matter = resolveFrontMatter(vFile.data.matter, vFile);
+
   const pageStylesheets = typeof matter.stylesheets === 'string' ? [matter.stylesheets] : matter.stylesheets ?? [];
   const pageScripts = typeof matter.scripts === 'string' ? [matter.scripts] : matter.scripts ?? [];
   delete matter.stylesheets; // The pageStylesheets will be added separately (unbundled)
   delete matter.scripts; // the pageScripts will be added separately (unbundled)
-  return Object.assign(base, defaults, matter, { pageStylesheets, pageScripts });
+
+  return Object.assign(base, defaults, matter, {
+    pageStylesheets: pageStylesheets.map(sheet => join(pathname, sheet)),
+    pageScripts: pageScripts.map(script => join(pathname, script))
+  });
 };
 
 export const iso = (value?: string | Date): string =>

@@ -28,6 +28,7 @@ declare module 'VFile' {
     tree: Tree;
     structuredContent: Schema;
     meta: Meta;
+    pathname: string;
     vFiles: Record<PageType, VFile[]>;
   }
 }

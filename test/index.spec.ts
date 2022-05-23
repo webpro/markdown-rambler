@@ -20,6 +20,7 @@ test('should parse basic Markdown and render minimal HTML document from vFile', 
     <title>Hello, world!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="/test">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   </head>
@@ -187,6 +188,7 @@ test('should parse Front Matter and merge with meta data', async () => {
     <meta property="og:type" content="website">
     <meta name="robots" content="noindex">
     <meta name="description" property="og:description" content="Markdown matters">
+    <meta property="og:url" content="/test">
     <meta property="article:published_time" content="2022-03-05T00:00:00.000Z">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -224,6 +226,7 @@ test('should add article type, and use for default values with layout', async ()
     <title>An Article</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:type" content="article">
+    <meta property="og:url" content="/test">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/styles.css">
@@ -258,13 +261,14 @@ test('should add custom page stylesheets and scripts', async () => {
     <title>Custom Styles and Scripts</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="/test">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="./custom.css">
+    <link rel="stylesheet" href="/test/custom.css">
   </head>
   <body>
     <h1 id="custom-styles-and-scripts">Custom Styles and Scripts</h1>
-    <script src="./custom.js"></script>
+    <script src="/test/custom.js"></script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","mainEntityOfPage":{"@type":"WebPage","@id":"/test"},"inLanguage":"en"}</script>
   </body>
 </html>

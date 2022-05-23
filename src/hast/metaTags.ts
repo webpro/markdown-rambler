@@ -17,7 +17,7 @@ export const getMetaTags = (meta: Meta): MetaTag[] => {
 
   if (meta.description) tags.push({ name: 'description', property: 'og:description', content: meta.description });
   if (meta.name) tags.push({ property: 'og:site_name', content: meta.name });
-  if (meta.host && meta.pathname) tags.push({ property: 'og:url', content: meta.host + meta.pathname });
+  if (meta.href) tags.push({ property: 'og:url', content: meta.href });
 
   if (meta.author) tags.push({ name: 'author', content: meta.author.name });
   if (meta.published) tags.push({ property: 'article:published_time', content: iso(meta.published) });

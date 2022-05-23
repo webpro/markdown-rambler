@@ -26,7 +26,7 @@ export const getLinkTags = (meta: Meta): LinkTag[] => {
 
   if (meta.manifest) tags.push({ rel: 'manifest', href: meta.manifest });
 
-  if (meta.host && meta.pathname) tags.push({ rel: 'canonical', href: meta.host + meta.pathname });
+  if (meta.host && meta.href) tags.push({ rel: 'canonical', href: meta.href });
 
   const stylesheets = meta.bundledStylesheets ?? meta.stylesheets;
   if (stylesheets) tags.push(...stylesheets.map(href => ({ rel: 'stylesheet', href })));
