@@ -363,11 +363,12 @@ export class MarkdownRambler {
         title: vFile.data.meta.title,
         description: vFile.data.meta.description,
         pathname: vFile.data.meta.pathname,
-        content: vFile.data.markdown
+        content: vFile.data.markdown,
+        tags: vFile.data.meta.tags
       }));
 
     const miniSearch = new MiniSearch({
-      fields: ['title', 'description', 'content'],
+      fields: ['title', 'tags', 'description', 'content'],
       storeFields: ['title', 'description', 'pathname']
     });
 
