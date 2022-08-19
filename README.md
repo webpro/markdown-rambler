@@ -20,6 +20,11 @@ Turns directories with Markdown files into static websites.
 - Writes **search index** (using MiniMatch).
 - Features a `--watch` mode for auto re-generation.
 
+## Showcase
+
+See [webpro.nl](https://www.webpro.nl) and [github.com/webpro/webpro.nl](https://github.com/webpro/webpro.nl) for an
+example website powered by Markdown Rambler.
+
 ## Input
 
 ```
@@ -61,14 +66,14 @@ rambler.run();
     └── sitemap.txt
 ```
 
-And all pathnames in `/sitemap.txt`:
+And all URLs in `/sitemap.txt`:
 
 ```
-/
-/articles/starting-a-blog
-/articles/writing-a-blogpost
-/articles/yet-another-article
-/blog
+https://example.org/
+https://example.org/articles/starting-a-blog
+https://example.org/articles/writing-a-blogpost
+https://example.org/articles/yet-another-article
+https://example.org/blog
 ```
 
 ## Tests
