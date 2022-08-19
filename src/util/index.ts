@@ -29,6 +29,10 @@ const resolveFrontMatter = (matter, vFile): FrontMatter => {
         image.src = isAbsolute(image.src) ? image.src : join(vFile.data.pathname, image.src);
         obj[key] = image;
         break;
+      case 'published':
+      case 'modified':
+        obj[key] = new Date(matter[key]);
+        break;
       default:
         obj[key] = matter[key];
         break;
