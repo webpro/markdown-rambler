@@ -59,10 +59,19 @@ export const optimizeSVG = async (source, target) => {
   await writeFile(target, optimized.data, 'utf8');
 };
 
-export const watchDir = async ({ dir, cb, ignoreDir }) => {
+export const isInIgnoreDir = (file, ignorePatterns) => {
+  return ignorePatterns.some(dir => {
+    if (dir instanceof RegExp) return dir.test(file);
+    if (typeof dir === 'string') return new RegExp(dir).test(file);
+    if (typeof dir === 'function') return dir(file);
+    throw new Error(`Invalid ignoreDir value (${dir})`);
+  });
+};
+
+export const watchDir = async ({ dir, cb, ignorePatterns }) => {
   const callback = (eventType: string, filename: string): void => {
     const file = join(dir, filename);
-    if (file.startsWith(ignoreDir) || file.startsWith('.') || file.startsWith('node_modules')) return;
+    if (isInIgnoreDir(file, ignorePatterns)) return;
     if (eventType === 'change') {
       if (filename) {
         cb([dir, filename]);

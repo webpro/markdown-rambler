@@ -44,12 +44,15 @@ interface TransferrableOptions {
   feed: false | Feed;
 }
 
+type IgnorePattern = string | RegExp | ((file: string) => Boolean);
+
 export interface RamblerOptions extends Partial<TransferrableOptions> {
   contentDir?: string | string[];
   contentFiles?: string | string[];
   publicDir?: string;
   outputDir?: string;
   watchDir?: string | string[];
+  ignorePattern?: IgnorePattern | IgnorePattern[];
   verbose?: boolean;
   watch?: boolean;
   search?: boolean | Search;

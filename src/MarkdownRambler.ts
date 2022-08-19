@@ -49,6 +49,7 @@ export class MarkdownRambler {
       contentFiles: '**/*',
       publicDir: 'public',
       outputDir: 'dist',
+      ignorePattern: /^(\.|node_modules)/,
       host: '',
       name: '',
       language: 'en',
@@ -119,7 +120,7 @@ export class MarkdownRambler {
 
     if (this.options.watch) {
       const watchDirs = await this.watch([this.options.contentDir, this.options.publicDir].flat().filter(unique));
-      watchDirs.forEach(dir => console.log(`▶︎ Watching for changes in ./${dir}`));
+      watchDirs.forEach(dir => console.log(`▶︎ Watching for changes in ${dir}`));
     }
   }
 
@@ -380,10 +381,10 @@ export class MarkdownRambler {
   }
 
   public async watch(dirs: string[]) {
-    const ignoreDir = this.options.outputDir;
+    const ignorePatterns = [this.options.outputDir, this.options.ignorePattern].flat();
     if (dirs) {
       const watchDirs = await Promise.all(
-        dirs.map(dir => watchDir({ dir, cb: file => this.handleFile(file), ignoreDir }))
+        dirs.map(dir => watchDir({ dir, cb: file => this.handleFile(file), ignorePatterns }))
       );
       return watchDirs.filter(Boolean);
     }

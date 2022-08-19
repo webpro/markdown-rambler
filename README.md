@@ -81,15 +81,16 @@ See [the tests](./test/index.spec.ts) to get an impression of the conversion fro
 
 #### File Structure & Output
 
-| Option         | Type                 | Default value | Description                        |
-| -------------- | -------------------- | ------------- | ---------------------------------- |
-| `contentFiles` | `string \| string[]` | `'**/*'`      | Include Markdown and assets        |
-| `contentDir`   | `string \| string[]` | `['content']` | Directories containing Markdown    |
-| `publicDir`    | `string`             | `'public'`    | Directory containing public assets |
-| `outputDir`    | `string`             | `'dist'`      | Output directory                   |
-| `sitemap`      | `boolean`            | `true`        | Generates `sitemap.txt`            |
-| `feed`         | [`Feed`](#feed)      | `false`       | Generates `feed.xml` (RSS)         |
-| `search`       | [`Search`](#search)  | `false`       | Generates MiniSearch index         |
+| Option          | Type                 | Default value           | Description                              |
+| --------------- | -------------------- | ----------------------- | ---------------------------------------- |
+| `contentFiles`  | `string \| string[]` | `'**/*'`                | Include Markdown and assets              |
+| `contentDir`    | `string \| string[]` | `['content']`           | Directories containing Markdown          |
+| `ignorePattern` | `string`             | `/^(\.\|node_modules)/` | File pattern(s) to ignore with `--watch` |
+| `publicDir`     | `string`             | `'public'`              | Directory containing public assets       |
+| `outputDir`     | `string`             | `'dist'`                | Output directory                         |
+| `sitemap`       | `boolean`            | `true`                  | Generates `sitemap.txt`                  |
+| `feed`          | [`Feed`](#feed)      | `false`                 | Generates `feed.xml` (RSS)               |
+| `search`        | [`Search`](#search)  | `false`                 | Generates MiniSearch index               |
 
 #### Flags
 
