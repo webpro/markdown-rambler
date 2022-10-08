@@ -1,3 +1,4 @@
+import { EOL } from 'os';
 import { watch, constants } from 'fs';
 import { access, mkdir, readFile, writeFile, copyFile, appendFile } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
@@ -47,7 +48,7 @@ export const copy = async (source, target) => {
 };
 
 export const append = async (source, target) => {
-  await appendFile(target, await readFile(source));
+  await appendFile(target, (await readFile(source)) + EOL);
 };
 
 export const optimizeSVG = async (source, target) => {
