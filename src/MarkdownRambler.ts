@@ -6,7 +6,6 @@ import { globby } from 'globby';
 import _ from 'lodash';
 import { unified } from 'unified';
 import { toVFile, readSync } from 'to-vfile';
-import { VFile } from 'vfile';
 import { matter } from 'vfile-matter';
 import { rename } from 'vfile-rename';
 import { mkdirp } from 'vfile-mkdirp';
@@ -25,7 +24,7 @@ import { buildMetaData, groupByType, unique, ucFirst } from './util';
 import { resolvePathname, write, copy, append, optimizeSVG, watchDir } from './util/fs';
 import { getStructuredContent } from './util/structured-content';
 import { layout } from './hast/layout';
-
+import type { VFile } from 'vfile';
 import type { File, Files, RamblerOptions, PageType } from './types';
 
 const debug = debuglog('markdown-rambler');
@@ -43,7 +42,7 @@ export class MarkdownRambler {
     this.options = Object.freeze(this.setDefaultOptions(options));
   }
 
-  setDefaultOptions(options) {
+  private setDefaultOptions(options) {
     return _.defaultsDeep(options, {
       contentDir: !options.contentFiles ? 'content' : '.',
       contentFiles: '**/*',
@@ -60,7 +59,7 @@ export class MarkdownRambler {
     });
   }
 
-  getTransformers(vFile) {
+  private getTransformers(vFile) {
     const { rehypePlugins = [] } = this.options;
     const plugins = [
       typeof defaultTransformers === 'function' ? defaultTransformers(vFile) : defaultTransformers,
@@ -69,7 +68,8 @@ export class MarkdownRambler {
     return plugins.flat();
   }
 
-  async run() {
+  /** @public */
+  public async run() {
     const files = await this.getContentFiles();
 
     if (!this.options.watch && this.options.publicDir) {
@@ -124,7 +124,7 @@ export class MarkdownRambler {
     }
   }
 
-  async getContentFiles(): Promise<Files> {
+  private async getContentFiles(): Promise<Files> {
     const dirs = [this.options.publicDir, this.options.contentDir].flat().filter(unique);
     const glob = [this.options.contentFiles].flat().filter(unique);
     const files = [];
@@ -135,7 +135,7 @@ export class MarkdownRambler {
     return files.flat();
   }
 
-  async bundleAssets(assetType: 'stylesheets' | 'scripts') {
+  private async bundleAssets(assetType: 'stylesheets' | 'scripts') {
     const bundled = `bundled${ucFirst(assetType)}`;
     const pageTypes = Object.keys(this.options.defaults);
     const orderedPageTypes = ['page', ...pageTypes].filter(unique);
@@ -173,7 +173,7 @@ export class MarkdownRambler {
     }
   }
 
-  async copyAsset(file: File) {
+  private async copyAsset(file: File) {
     const [dir, filename] = file;
     const source = join(dir, filename);
     const target = join(this.options.outputDir, filename);
@@ -189,7 +189,7 @@ export class MarkdownRambler {
     }
   }
 
-  async handleFile(file: File) {
+  private async handleFile(file: File) {
     const [dir, filename] = file;
     if (filename.endsWith('.md')) {
       const parsedVFile = await this.parseMarkdownFile(file);
@@ -203,14 +203,14 @@ export class MarkdownRambler {
     }
   }
 
-  async parseMarkdownFile([dir, filename]: File) {
+  private async parseMarkdownFile([dir, filename]: File) {
     const source = join(dir, filename);
     const vFile = readSync(source);
     vFile.history.unshift(filename);
     return this.parseMarkdownVFile(vFile);
   }
 
-  async parseMarkdownVFile(vFile: VFile) {
+  public async parseMarkdownVFile(vFile: VFile) {
     dbg(vFile, `Parsing source file`);
 
     const options = this.options;
@@ -252,15 +252,15 @@ export class MarkdownRambler {
     return vFile;
   }
 
-  parseMarkdownFiles(files: Files): Promise<VFile[]> {
+  public parseMarkdownFiles(files: Files): Promise<VFile[]> {
     return Promise.all(files.map(file => this.parseMarkdownFile(file)));
   }
 
-  renderMarkdownFiles(vFiles: VFile[]) {
+  public renderMarkdownFiles(vFiles: VFile[]) {
     return Promise.all(vFiles.map(vFile => this.renderMarkdownFile(vFile)));
   }
 
-  async renderMarkdownFile(vFile: VFile): Promise<VFile> {
+  public async renderMarkdownFile(vFile: VFile): Promise<VFile> {
     dbg(vFile, `Rendering ${vFile.history.at(-1)}`);
     const { options } = this;
 
@@ -341,7 +341,7 @@ export class MarkdownRambler {
     return filename;
   }
 
-  async renderSitemap(vFiles: VFile[]) {
+  private async renderSitemap(vFiles: VFile[]) {
     if (!this.options.host) {
       this.verbose('Unable to render sitemap without `host`');
       return;
@@ -354,7 +354,7 @@ export class MarkdownRambler {
     return filename;
   }
 
-  async renderSearchIndex(vFiles: VFile[]) {
+  private async renderSearchIndex(vFiles: VFile[]) {
     const defaults = { outputDir: '_search', filter: () => true };
     const options = this.options.search === true ? defaults : _.defaults(this.options.search, defaults);
     const documents = vFiles
@@ -391,7 +391,7 @@ export class MarkdownRambler {
     return [];
   }
 
-  verbose(text: string) {
+  private verbose(text: string) {
     if (this.options.verbose) {
       console.log(text);
     }

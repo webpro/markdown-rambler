@@ -19,7 +19,7 @@ export const resolvePathname = filename => {
   return (isFloating(filename) ? '/' : '') + filename.replace(/(README|index)?\.md$/, '').replace(/(.+)\/$/, '$1');
 };
 
-export const ensureDir = async target => {
+const ensureDir = async target => {
   const dir = dirname(target);
   try {
     await access(dir, constants.W_OK);
@@ -28,7 +28,7 @@ export const ensureDir = async target => {
   }
 };
 
-export const isDir = async dir => {
+const isDir = async dir => {
   try {
     await access(dir, constants.W_OK);
     return true;
@@ -60,7 +60,7 @@ export const optimizeSVG = async (source, target) => {
   await writeFile(target, optimized.data, 'utf8');
 };
 
-export const isInIgnoreDir = (file, ignorePatterns) => {
+const isInIgnoreDir = (file, ignorePatterns) => {
   return ignorePatterns.some(dir => {
     if (dir instanceof RegExp) return dir.test(file);
     if (typeof dir === 'string') return new RegExp(dir).test(file);

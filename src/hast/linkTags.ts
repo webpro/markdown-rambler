@@ -1,4 +1,4 @@
-import { join, extname } from 'path';
+import { extname } from 'path';
 import type { Meta } from '../types';
 
 const mimeTypes = {
