@@ -7,9 +7,10 @@ function orderDefinitions() {
 }
 
 function transformer(tree) {
+  let id = 0;
   const refs = [];
   const defs = [];
-  const ordered = [];
+  const store = [];
 
   visit(tree, ['linkReference', 'imageReference', 'definition'], node => {
     if (is(node, ['linkReference', 'imageReference'])) refs.push(node);
@@ -17,30 +18,37 @@ function transformer(tree) {
   });
 
   refs.forEach(ref => {
-    const def = ordered.find(d => d.identifier === ref.identifier);
-    if (!def) {
-      ordered.push(defs.find(d => d.identifier === ref.identifier));
-      const id = String(ordered.length);
-      ref.identifier = id;
-      ref.label = id;
+    const def = defs.find(d => d.identifier === ref.identifier);
+    const reusableDef = store.find(d => d.url === def.url);
+    if (reusableDef) {
+      ref.identifier = reusableDef.identifier;
+      ref.label = reusableDef.identifier;
     } else {
-      ref.identifier = def.identifier;
-      ref.label = def.identifier;
+      const identifier = isNaN(ref.identifier) ? ref.identifier : String(++id);
+      ref.identifier = identifier;
+      ref.label = identifier;
+      store.push({
+        type: 'definition',
+        title: def.title,
+        url: def.url,
+        identifier,
+        label: identifier
+      });
     }
   });
 
   remove(tree, 'definition');
 
-  ordered.forEach((def, index) => {
-    const id = String(index + 1);
-    tree.children.push({
-      type: 'definition',
-      title: def.title,
-      url: def.url,
-      identifier: id,
-      label: id
-    });
+  store.sort(definitionSorter).forEach(def => {
+    tree.children.push(def);
   });
+}
+
+function definitionSorter(a, b) {
+  if (isNaN(a.identifier) && !isNaN(b.identifier)) return 1;
+  if (!isNaN(a.identifier) && isNaN(b.identifier)) return -1;
+  if (!isNaN(b.identifier) && !isNaN(a.identifier)) return Number(a.identifier) - Number(b.identifier);
+  return a.identifier - b.identifier;
 }
 
 export default orderDefinitions;
